@@ -1,0 +1,707 @@
+{
+  "generated_at": "2026-09-16T02:26:57Z",
+  "source": "DATA_RELEASE",
+  "cohort": {
+    "total": 1382,
+    "groups": [
+      {
+        "label": "PD",
+        "count": 447
+      },
+      {
+        "label": "HC",
+        "count": 935
+      }
+    ],
+    "unexpected_labels": []
+  },
+  "modalities": [
+    {
+      "flag": "voice_available",
+      "label": "Voice (any)",
+      "source_column": "voice_available",
+      "derived": null,
+      "total": 1003,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 358
+        },
+        {
+          "label": "HC",
+          "count": 645
+        }
+      ],
+      "files_on_disk": 1828
+    },
+    {
+      "flag": "voiceAhh_available",
+      "label": "Voice — sustained /a/",
+      "source_column": "voiceAhh_available",
+      "derived": null,
+      "total": 843,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 339
+        },
+        {
+          "label": "HC",
+          "count": 504
+        }
+      ],
+      "files_on_disk": 843
+    },
+    {
+      "flag": "voiceYPL_available",
+      "label": "Voice — connected speech",
+      "source_column": "voiceYPL_available",
+      "derived": null,
+      "total": 985,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 353
+        },
+        {
+          "label": "HC",
+          "count": 632
+        }
+      ],
+      "files_on_disk": 985
+    },
+    {
+      "flag": "tremor_resting_available",
+      "label": "Tremor — resting",
+      "source_column": "tremor_resting_available",
+      "derived": null,
+      "total": 1210,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 402
+        },
+        {
+          "label": "HC",
+          "count": 808
+        }
+      ],
+      "files_on_disk": 1210
+    },
+    {
+      "flag": "tremor_postural_available",
+      "label": "Tremor — postural",
+      "source_column": "tremor_postural_available",
+      "derived": null,
+      "total": 1200,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 397
+        },
+        {
+          "label": "HC",
+          "count": 803
+        }
+      ],
+      "files_on_disk": 1200
+    },
+    {
+      "flag": "balance_available",
+      "label": "Balance",
+      "source_column": "balance_available",
+      "derived": null,
+      "total": 1139,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 351
+        },
+        {
+          "label": "HC",
+          "count": 788
+        }
+      ],
+      "files_on_disk": 1139
+    },
+    {
+      "flag": "gaitwalk_available",
+      "label": "Gait",
+      "source_column": "gaitwalk_available",
+      "derived": null,
+      "total": 1150,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 353
+        },
+        {
+          "label": "HC",
+          "count": 797
+        }
+      ],
+      "files_on_disk": 1150
+    },
+    {
+      "flag": "questionnaire_available",
+      "label": "Questionnaire (20 items)",
+      "source_column": "questionnaire_available",
+      "derived": null,
+      "total": 1331,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 426
+        },
+        {
+          "label": "HC",
+          "count": 905
+        }
+      ],
+      "files_on_disk": null
+    },
+    {
+      "flag": "clinical_scores_available",
+      "label": "Clinical scores",
+      "source_column": "clinical_scores_available",
+      "derived": null,
+      "total": 565,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 232
+        },
+        {
+          "label": "HC",
+          "count": 333
+        }
+      ],
+      "files_on_disk": null
+    }
+  ],
+  "age": {
+    "plausible_range": [
+      18,
+      110
+    ],
+    "bin_width": 10,
+    "reported": 1280,
+    "missing": 94,
+    "excluded_implausible": 8,
+    "bins": [
+      {
+        "label": "10–19",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 1
+          },
+          {
+            "label": "HC",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "label": "20–29",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 5
+          },
+          {
+            "label": "HC",
+            "count": 24
+          }
+        ]
+      },
+      {
+        "label": "30–39",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 7
+          },
+          {
+            "label": "HC",
+            "count": 47
+          }
+        ]
+      },
+      {
+        "label": "40–49",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 24
+          },
+          {
+            "label": "HC",
+            "count": 111
+          }
+        ]
+      },
+      {
+        "label": "50–59",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 64
+          },
+          {
+            "label": "HC",
+            "count": 239
+          }
+        ]
+      },
+      {
+        "label": "60–69",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 124
+          },
+          {
+            "label": "HC",
+            "count": 313
+          }
+        ]
+      },
+      {
+        "label": "70–79",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 114
+          },
+          {
+            "label": "HC",
+            "count": 153
+          }
+        ]
+      },
+      {
+        "label": "80–89",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 32
+          },
+          {
+            "label": "HC",
+            "count": 17
+          }
+        ]
+      },
+      {
+        "label": "90–99",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 4
+          },
+          {
+            "label": "HC",
+            "count": 0
+          }
+        ]
+      }
+    ],
+    "overall": {
+      "n": 1280,
+      "min": 18,
+      "max": 91,
+      "median": 62.0,
+      "mean": 60.7
+    },
+    "by_group": {
+      "PD": {
+        "n": 375,
+        "min": 18,
+        "max": 91,
+        "median": 67,
+        "mean": 65.4
+      },
+      "HC": {
+        "n": 905,
+        "min": 19,
+        "max": 87,
+        "median": 60,
+        "mean": 58.7
+      }
+    }
+  },
+  "demographics": {
+    "sex": [
+      {
+        "label": "female",
+        "count": 923
+      },
+      {
+        "label": "male",
+        "count": 458
+      },
+      {
+        "label": "none",
+        "count": 1
+      }
+    ],
+    "area": [
+      {
+        "label": "Self-download",
+        "count": 619
+      },
+      {
+        "label": "Field Screening",
+        "count": 477
+      },
+      {
+        "label": "ChulaPD Clinic",
+        "count": 268
+      },
+      {
+        "label": "Online Training",
+        "count": 16
+      },
+      {
+        "label": "VHVs",
+        "count": 2
+      }
+    ],
+    "education_status": [
+      {
+        "label": "Not specified",
+        "count": 863
+      },
+      {
+        "label": "Primary education",
+        "count": 214
+      },
+      {
+        "label": "Upper secondary / Vocational certificate",
+        "count": 85
+      },
+      {
+        "label": "Bachelors degree",
+        "count": 80
+      },
+      {
+        "label": "Lower secondary education",
+        "count": 64
+      },
+      {
+        "label": "Postgraduate degree",
+        "count": 46
+      },
+      {
+        "label": "Diploma / Associate degree",
+        "count": 17
+      },
+      {
+        "label": "No formal education",
+        "count": 13
+      }
+    ],
+    "income_band": [
+      {
+        "label": "not_specified",
+        "count": 501
+      },
+      {
+        "label": "other",
+        "count": 458
+      },
+      {
+        "label": "lt_5000",
+        "count": 159
+      },
+      {
+        "label": "5000_10000",
+        "count": 100
+      },
+      {
+        "label": "no_income",
+        "count": 51
+      },
+      {
+        "label": "gt_40000",
+        "count": 40
+      },
+      {
+        "label": "10001_20000",
+        "count": 36
+      },
+      {
+        "label": "20001_30000",
+        "count": 24
+      },
+      {
+        "label": "30001_40000",
+        "count": 13
+      }
+    ],
+    "province_count": 61
+  },
+  "tables": [
+    {
+      "file": "metadata.csv",
+      "rows": 1382,
+      "columns": 28,
+      "column_names": [
+        "subject_id",
+        "diagnosis",
+        "age",
+        "sex",
+        "province",
+        "area",
+        "education_status",
+        "occupation",
+        "marital_status",
+        "income_band",
+        "encode_gender",
+        "encode_province_en",
+        "encode_educationstatus",
+        "encode_occupation",
+        "encode_maritalstatus",
+        "encode_emorument",
+        "encode_test_result",
+        "encode_prediction",
+        "voice_available",
+        "voiceAhh_available",
+        "voiceYPL_available",
+        "tremor_resting_available",
+        "tremor_postural_available",
+        "balance_available",
+        "gaitwalk_available",
+        "questionnaire_available",
+        "clinical_scores_available",
+        "dataset_version"
+      ],
+      "bytes": 197392
+    },
+    {
+      "file": "clinical_scores.csv",
+      "rows": 1382,
+      "columns": 10,
+      "column_names": [
+        "subject_id",
+        "moca_score",
+        "tmse_score",
+        "hamd_score",
+        "mds_updrs_part3_score",
+        "epworth_score",
+        "smell_score",
+        "rbd_score",
+        "rome4_score",
+        "food_score"
+      ],
+      "bytes": 27364
+    },
+    {
+      "file": "questionnaire_responses.csv",
+      "rows": 1331,
+      "columns": 21,
+      "column_names": [
+        "subject_id",
+        "q01",
+        "q02",
+        "q03",
+        "q04",
+        "q05",
+        "q06",
+        "q07",
+        "q08",
+        "q09",
+        "q10",
+        "q11",
+        "q12",
+        "q13",
+        "q14",
+        "q15",
+        "q16",
+        "q17",
+        "q18",
+        "q19",
+        "q20"
+      ],
+      "bytes": 62652
+    },
+    {
+      "file": "questionnaire_schema.csv",
+      "rows": 20,
+      "columns": 5,
+      "column_names": [
+        "question_id",
+        "question_text_th",
+        "question_text_en",
+        "response_type",
+        "encoding"
+      ],
+      "bytes": 7614
+    }
+  ],
+  "questionnaire_schema": [
+    {
+      "question_id": "q01",
+      "question_text_th": "ท่านเคยมีอาการสั่นที่มือ หรือขา โดยมีอาการขณะพักหรืออยู่เฉยๆ",
+      "question_text_en": "Have you experienced tremor in your hands or legs while at rest?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q02",
+      "question_text_th": "ท่านเขียนหนังสือช้าลง หรือเขียนหนังสือตัวเล็กลงกว่าเดิม",
+      "question_text_en": "Have you noticed that your handwriting has become slower or smaller than before?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q03",
+      "question_text_th": "ท่านรู้สึกว่าเคลื่อนไหวช้าลงกว่าเมื่อก่อน เช่น การหวีผม แต่งตัว อาบน้ำ หรือรู้สึกว่าการติดกระดุม หรือเปิดฝาขวดน้ำทำได้ลำบากกว่าเก่า",
+      "question_text_en": "Do you feel that your movements have become slower than before, such as combing your hair, dressing, bathing, buttoning clothes, or opening bottle caps?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q04",
+      "question_text_th": "เคยมีคนบอกว่าเสียงของท่านเบาลงกว่าเมื่อก่อน หรือผู้ฟังต้องถามซ้ำบ่อยๆ เพราะไม่ได้ยินเสียงท่านพูด",
+      "question_text_en": "Have others told you that your voice has become softer than before, or that they often ask you to repeat yourself because they cannot hear you clearly?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q05",
+      "question_text_th": "ท่านรู้สึกว่าแขนของท่านแกว่งน้อยลงเวลาเดิน",
+      "question_text_en": "Do you feel that your arms swing less when you walk?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q06",
+      "question_text_th": "ท่านเดินก้าวสั้นๆ และเดินซอยเท้าถี่",
+      "question_text_en": "Do you walk with shorter steps or a shuffling gait?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q07",
+      "question_text_th": "ท่านมีอาการก้าวขาไม่ออก หรือก้าวติดขณะเริ่มต้นออกเดิน หรือขณะเดิน หรือหมุนตัว",
+      "question_text_en": "Do you experience difficulty initiating steps or freezing of gait when starting to walk, while walking, or when turning?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q08",
+      "question_text_th": "ท่านมีปัญหาพุ่งตัวไปข้างหน้าขณะเดิน ทำให้ก้าวตามไม่ทัน หรือหยุดเดินทันทีได้ยาก",
+      "question_text_en": "Do you have a tendency to lean or move forward while walking, making it difficult to keep up your steps or to stop suddenly?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q09",
+      "question_text_th": "ท่านมีอาการข้อใดข้อหนึ่งต่อไปนี้ พลิกตัวได้ลำบากเวลานอน หรือลุกจากที่นอนลำบาก หรือหลังจากนั่งลงแล้ว ท่านรู้สึกว่าลุกยาก หรือลุกลำบาก",
+      "question_text_en": "Do you have difficulty turning in bed, getting out of bed, or standing up after sitting down?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q10",
+      "question_text_th": "มีอาการสั่น เคลื่อนไหวช้า หรือแข็งเกร็งเริ่มที่ข้างใดข้างหนึ่งของร่างกายก่อน",
+      "question_text_en": "Did tremor, slowness of movement, or stiffness begin on one side of your body first?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q11",
+      "question_text_th": "ท่านทราบว่าตนเองมีอาการพูดออกเสียง หรือตะโกน หรือละเมอ หรือขยับแขนขาที่อาจจะสอดคล้องกับความฝัน หรือตกเตียงขณะนอนหลับ หรือเคยได้รับการบอกจากคู่นอน หรือผู้ดูแล ว่าท่านมีอาการดังกล่าว",
+      "question_text_en": "Are you aware of talking, shouting, acting out dreams, moving your limbs, or falling out of bed during sleep, or have you been told by a bed partner or caregiver that you have such behaviors?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q12",
+      "question_text_th": "ท่านมีอาการง่วงนอนระหว่างวันมากผิดปกติ หรือผลอยหลับระหว่างขณะทำกิจกรรมเป็นประจำ",
+      "question_text_en": "Do you experience excessive daytime sleepiness or frequently fall asleep during activities?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q13",
+      "question_text_th": "ท่านรู้สึกว่าการได้กลิ่นของท่านลดลง",
+      "question_text_en": "Do you feel that your sense of smell has decreased?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q14",
+      "question_text_th": "ในช่วง 3 เดือนที่ผ่านมา ท่านมีอาการท้องผูกเรื้อรัง โดยถ่ายน้อยกว่า 3 ครั้ง/สัปดาห์",
+      "question_text_en": "In the past 3 months, have you had chronic constipation, defined as fewer than three bowel movements per week?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q15",
+      "question_text_th": "ท่านมีอาการซึมเศร้า ร้องไห้ง่ายกว่าปกติ หรือขาดความสนใจต่อสิ่งแวดล้อมรอบข้าง หรือสิ่งที่เคยให้ความสนุกสนานในอดีต",
+      "question_text_en": "Have you experienced depression, increased tearfulness, or a loss of interest in your surroundings or activities you previously enjoyed?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q16",
+      "question_text_th": "ท่านเคยเห็นภาพหลอน หรือได้ยินเสียง โดยที่ไม่มีตัวคน",
+      "question_text_en": "Have you experienced visual hallucinations or heard sounds when no one was present?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q17",
+      "question_text_th": "ท่านมีอาการหน้ามืด มึน หรือเวียนศีรษะ เวลาเปลี่ยนท่าจากนั่งหรือนอนเป็นลุกยืน และอาการมักจะดีขึ้น หรือหายไปหลังจากที่นั่งหรือนอนเป็นประจำ",
+      "question_text_en": "Do you feel dizzy or lightheaded when standing up from sitting or lying down, and does it improve after sitting or lying down again?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q18",
+      "question_text_th": "ท่านมีปัญหาการควบคุมปัสสาวะ เช่น การกลั้นปัสสาวะไม่ได้ ปัสสาวะคั่งเป็นประจำ",
+      "question_text_en": "Do you have problems with bladder control, such as urinary incontinence or urinary retention?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q19",
+      "question_text_th": "ท่านมีปัญหาความคิดวิเคราะห์ ความจำ การคำนวณ ที่แย่ลง นานมากกว่า 1 ปีขึ้นไป",
+      "question_text_en": "Have you had worsening problems with thinking, memory, or calculation for more than one year?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    },
+    {
+      "question_id": "q20",
+      "question_text_th": "ท่านมีปัญหาการทรงตัว หรือหกล้มบ่อย ในระยะแรกที่เกิดอาการ เคลื่อนไหวช้า แข็งเกร็ง หรือสั่น",
+      "question_text_en": "Did you have balance problems or frequent falls early in the course of slowness, stiffness, or tremor symptoms?",
+      "response_type": "binary",
+      "encoding": "0=No;1=Yes"
+    }
+  ],
+  "release": {
+    "total_files": 6532,
+    "total_bytes": 599057328,
+    "changes_since_v1": [
+      "Expanded cohort to 1382 participants",
+      "Added `clinical_scores.csv` with nine clinical instruments",
+      "Added demographic encoding columns (`encode_*`) in `metadata.csv`",
+      "Added `clinical_scores_available` and `dataset_version` to `metadata.csv`"
+    ]
+  },
+  "clinical_score_columns": [
+    "moca_score",
+    "tmse_score",
+    "hamd_score",
+    "mds_updrs_part3_score",
+    "epworth_score",
+    "smell_score",
+    "rbd_score",
+    "rome4_score",
+    "food_score"
+  ],
+  "schema_drift": []
+}

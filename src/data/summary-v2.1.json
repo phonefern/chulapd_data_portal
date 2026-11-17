@@ -1,0 +1,429 @@
+{
+  "generated_at": "2026-11-17T08:49:07Z",
+  "version": "2.1",
+  "provisional": true,
+  "provenance": "acquisition_manifest",
+  "provenance_note": "Availability is what the acquisition backend recorded, not a count of released files. Nothing here has been verified against a file on disk. These figures are superseded once the release tree is built.",
+  "source": "record_id_filtered_20260916.csv",
+  "cohort": {
+    "total": 1837,
+    "groups": [
+      {
+        "label": "PD",
+        "count": 560
+      },
+      {
+        "label": "HC",
+        "count": 1277
+      }
+    ],
+    "unexpected_labels": []
+  },
+  "modalities": [
+    {
+      "flag": "voice_available",
+      "label": "Voice (any)",
+      "source_column": "has_voiceAhh, has_voiceYPL",
+      "derived": null,
+      "total": 1798,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 546
+        },
+        {
+          "label": "HC",
+          "count": 1252
+        }
+      ],
+      "files_on_disk": null
+    },
+    {
+      "flag": "voiceAhh_available",
+      "label": "Voice — sustained /a/",
+      "source_column": "has_voiceAhh",
+      "derived": null,
+      "total": 1792,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 544
+        },
+        {
+          "label": "HC",
+          "count": 1248
+        }
+      ],
+      "files_on_disk": null
+    },
+    {
+      "flag": "voiceYPL_available",
+      "label": "Voice — connected speech",
+      "source_column": "has_voiceYPL",
+      "derived": null,
+      "total": 1778,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 543
+        },
+        {
+          "label": "HC",
+          "count": 1235
+        }
+      ],
+      "files_on_disk": null
+    },
+    {
+      "flag": "tremor_resting_available",
+      "label": "Tremor — resting",
+      "source_column": "has_tremorResting",
+      "derived": null,
+      "total": 1715,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 531
+        },
+        {
+          "label": "HC",
+          "count": 1184
+        }
+      ],
+      "files_on_disk": null
+    },
+    {
+      "flag": "tremor_postural_available",
+      "label": "Tremor — postural",
+      "source_column": "has_tremorPostural",
+      "derived": null,
+      "total": 1697,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 525
+        },
+        {
+          "label": "HC",
+          "count": 1172
+        }
+      ],
+      "files_on_disk": null
+    },
+    {
+      "flag": "balance_available",
+      "label": "Balance",
+      "source_column": "has_balance",
+      "derived": null,
+      "total": 1628,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 474
+        },
+        {
+          "label": "HC",
+          "count": 1154
+        }
+      ],
+      "files_on_disk": null
+    },
+    {
+      "flag": "gaitwalk_available",
+      "label": "Gait",
+      "source_column": "has_gaitWalk",
+      "derived": null,
+      "total": 1644,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 473
+        },
+        {
+          "label": "HC",
+          "count": 1171
+        }
+      ],
+      "files_on_disk": null
+    },
+    {
+      "flag": "questionnaire_available",
+      "label": "Questionnaire (20 items)",
+      "source_column": "has_questionnaire",
+      "derived": null,
+      "total": 1797,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 544
+        },
+        {
+          "label": "HC",
+          "count": 1253
+        }
+      ],
+      "files_on_disk": null
+    },
+    {
+      "flag": "dual_tap_available",
+      "label": "Dual-tap",
+      "source_column": "has_dualTap, has_dualTapRight",
+      "derived": null,
+      "total": 1810,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 556
+        },
+        {
+          "label": "HC",
+          "count": 1254
+        }
+      ],
+      "files_on_disk": null
+    },
+    {
+      "flag": "pinch_to_size_available",
+      "label": "Pinch-to-size",
+      "source_column": "has_pinchToSize, has_pinchToSizeRight",
+      "derived": null,
+      "total": 880,
+      "by_group": [
+        {
+          "label": "PD",
+          "count": 263
+        },
+        {
+          "label": "HC",
+          "count": 617
+        }
+      ],
+      "files_on_disk": null
+    }
+  ],
+  "age": {
+    "plausible_range": [
+      18,
+      110
+    ],
+    "bin_width": 10,
+    "reported": 1739,
+    "missing": 98,
+    "excluded_implausible": 0,
+    "bins": [
+      {
+        "label": "10–19",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 1
+          },
+          {
+            "label": "HC",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "label": "20–29",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 5
+          },
+          {
+            "label": "HC",
+            "count": 23
+          }
+        ]
+      },
+      {
+        "label": "30–39",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 7
+          },
+          {
+            "label": "HC",
+            "count": 47
+          }
+        ]
+      },
+      {
+        "label": "40–49",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 36
+          },
+          {
+            "label": "HC",
+            "count": 130
+          }
+        ]
+      },
+      {
+        "label": "50–59",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 84
+          },
+          {
+            "label": "HC",
+            "count": 339
+          }
+        ]
+      },
+      {
+        "label": "60–69",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 157
+          },
+          {
+            "label": "HC",
+            "count": 457
+          }
+        ]
+      },
+      {
+        "label": "70–79",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 146
+          },
+          {
+            "label": "HC",
+            "count": 224
+          }
+        ]
+      },
+      {
+        "label": "80–89",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 50
+          },
+          {
+            "label": "HC",
+            "count": 27
+          }
+        ]
+      },
+      {
+        "label": "90–99",
+        "by_group": [
+          {
+            "label": "PD",
+            "count": 5
+          },
+          {
+            "label": "HC",
+            "count": 0
+          }
+        ]
+      }
+    ],
+    "overall": {
+      "n": 1739,
+      "min": 18,
+      "max": 92,
+      "median": 63,
+      "mean": 61.6
+    },
+    "by_group": {
+      "PD": {
+        "n": 491,
+        "min": 18,
+        "max": 92,
+        "median": 67,
+        "mean": 65.8
+      },
+      "HC": {
+        "n": 1248,
+        "min": 19,
+        "max": 87,
+        "median": 61.0,
+        "mean": 60.0
+      }
+    }
+  },
+  "demographics": {
+    "sex": [
+      {
+        "label": "female",
+        "count": 1275
+      },
+      {
+        "label": "male",
+        "count": 562
+      }
+    ],
+    "area": [
+      {
+        "label": "Self-download",
+        "count": 1036
+      },
+      {
+        "label": "Field Screening",
+        "count": 467
+      },
+      {
+        "label": "ChulaPD Clinic",
+        "count": 316
+      },
+      {
+        "label": "Online Training",
+        "count": 16
+      },
+      {
+        "label": "VHVs",
+        "count": 2
+      }
+    ],
+    "education_status": [
+      {
+        "label": "Not specified",
+        "count": 904
+      },
+      {
+        "label": "Primary education",
+        "count": 438
+      },
+      {
+        "label": "Upper secondary / Vocational certificate",
+        "count": 141
+      },
+      {
+        "label": "Bachelors degree",
+        "count": 115
+      },
+      {
+        "label": "Lower secondary education",
+        "count": 112
+      },
+      {
+        "label": "Postgraduate degree",
+        "count": 68
+      },
+      {
+        "label": "Diploma / Associate degree",
+        "count": 37
+      },
+      {
+        "label": "No formal education",
+        "count": 22
+      }
+    ],
+    "province_count": 63
+  },
+  "release": {
+    "total_files": null,
+    "total_bytes": null
+  }
+}
