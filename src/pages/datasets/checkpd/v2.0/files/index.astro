@@ -1,0 +1,103 @@
+---
+import Base from '../../../../../layouts/Base.astro';
+import summary from '../../../../../data/summary-v2.0.json';
+import { dataset, portal } from '../../../../../data/dataset';
+import DatasetNav from '../../../../../components/DatasetNav.astro';
+
+const n = (value: number) => value.toLocaleString('en-US');
+const size = (bytes: number) => {
+  if (bytes >= 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(2)} MB`;
+  return `${(bytes / 1024).toFixed(1)} KB`;
+};
+const releaseGb = (summary.release.total_bytes / 1024 ** 3).toFixed(2);
+const releaseFolder = dataset.shortTitle.replace(' ', '_');
+const directoryTree = `${releaseFolder}/
+├── README.md
+├── metadata.csv
+├── clinical_scores.csv
+├── questionnaire_responses.csv
+├── questionnaire_schema.csv
+├── data_dictionary.csv          (Pending)
+├── file_index.csv               (Pending)
+├── voice/
+│   ├── voiceAhh/S####_voiceAhh.wav
+│   └── voiceYPL/S####_voiceYPL.wav
+├── tremor_resting/S####_tremor_resting.json
+├── tremor_postural/S####_tremor_postural.json
+├── balance/S####_balance.json
+└── gaitwalk/S####_gaitwalk.json`;
+
+const metadata = summary.tables.find((table) => table.file === 'metadata.csv')!;
+const columnGroups = [
+  { label: 'Identity and release', names: ['subject_id', 'diagnosis', 'dataset_version'] },
+  { label: 'Demographics', names: ['age', 'sex', 'province', 'area', 'education_status', 'occupation', 'marital_status', 'income_band'] },
+  { label: 'Encoded demographics', names: ['encode_gender', 'encode_province_en', 'encode_educationstatus', 'encode_occupation', 'encode_maritalstatus', 'encode_emorument', 'encode_test_result', 'encode_prediction'] },
+  { label: 'Availability flags', names: ['voice_available', 'voiceAhh_available', 'voiceYPL_available', 'tremor_resting_available', 'tremor_postural_available', 'balance_available', 'gaitwalk_available', 'questionnaire_available', 'clinical_scores_available'] },
+].map((group) => ({ ...group, names: group.names.filter((name) => metadata.column_names.includes(name)) }));
+const groupedNames = new Set(columnGroups.flatMap((group) => group.names));
+const unexpectedColumns = metadata.column_names.filter((name) => !groupedNames.has(name));
+---
+
+<Base title={`Files - ${dataset.shortTitle} - ${portal.name}`} description={`File structure, schemas and naming conventions for ${dataset.shortTitle}.`}>
+  <nav class="wrap crumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a><span aria-hidden="true">/</span><a href="/datasets/">Datasets</a><span aria-hidden="true">/</span>
+    <a href={dataset.path}>{dataset.shortTitle}</a><span aria-hidden="true">/</span><span aria-current="page">Files</span>
+  </nav>
+
+  <header class="wrap page-head">
+    <p class="eyebrow">{dataset.shortTitle}</p>
+    <h1>Files and structure</h1>
+    <p class="lede prose">A complete map of the release, table schemas and file naming conventions for planning an analysis before requesting access.</p>
+  </header>
+
+  <DatasetNav />
+
+  <section class="section section--first"><div class="wrap stack">
+    <div><p class="eyebrow">Release tree</p><h2>Directory structure</h2></div>
+    <div class="table-scroll tree"><pre><code>{directoryTree}</code></pre></div>
+    <p class="note note--warn"><strong>Pending files.</strong> <code>data_dictionary.csv</code> and <code>file_index.csv</code> are planned release files and are not yet available.</p>
+  </div></section>
+
+  <section class="section"><div class="wrap stack">
+    <div><p class="eyebrow">Coverage</p><h2>Files by modality</h2></div>
+    <div class="table-scroll"><table>
+      <thead><tr><th scope="col">Modality</th><th scope="col" class="num">Participants</th><th scope="col" class="num">Files on disk</th></tr></thead>
+      <tbody>{summary.modalities.map((modality) => <tr><th scope="row">{modality.label}</th><td class="num">{n(modality.total)}</td><td class="num">{modality.files_on_disk === null ? <span aria-label="Table-backed modality">&mdash;</span> : n(modality.files_on_disk)}</td></tr>)}</tbody>
+    </table></div>
+    <div class="notes-grid">
+      <p class="note note--info"><strong>Voice counts two files per participant.</strong> <code>voice_available</code> is a roll-up of the sustained-vowel and connected-speech tasks, so its file count is their sum.</p>
+      <p class="note note--info"><strong>Voice is a roll-up.</strong> Voice (any) combines sustained phonation and connected speech; its file total is the sum of both voice directories.</p>
+      <p class="note"><strong>Table-backed modalities.</strong> Questionnaire responses and clinical scores live in CSV tables. An em dash means there is no separate signal-file directory, not zero data.</p>
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap stack">
+    <div><p class="eyebrow">Tables</p><h2>Released CSV tables</h2></div>
+    <div class="table-scroll"><table>
+      <thead><tr><th scope="col">File</th><th scope="col" class="num">Rows</th><th scope="col" class="num">Columns</th><th scope="col" class="num">Size</th></tr></thead>
+      <tbody>{summary.tables.map((table) => <tr><th scope="row"><code>{table.file}</code></th><td class="num">{n(table.rows)}</td><td class="num">{n(table.columns)}</td><td class="num">{size(table.bytes)}</td></tr>)}</tbody>
+    </table></div>
+
+    <article class="card stack">
+      <div><p class="eyebrow"><code>metadata.csv</code></p><h3>Column groups</h3></div>
+      <div class="column-groups">{columnGroups.map((group) => <section><h4>{group.label}</h4><p>{group.names.map((name) => <code>{name}</code>)}</p></section>)}</div>
+      {unexpectedColumns.length > 0 && <p class="note note--warn"><strong>Unexpected released columns:</strong> {unexpectedColumns.map((name) => <code>{name}</code>)}</p>}
+    </article>
+  </div></section>
+
+  <section class="section"><div class="wrap stack">
+    <div><p class="eyebrow">Conventions</p><h2>Naming and integrity</h2></div>
+    <p class="prose">Subject IDs use the zero-padded <code>S####</code> pattern and form a contiguous release sequence. No backend, hospital or patient identifier appears in any released file. Timestamps inside signal files are relative seconds beginning at zero; absolute timestamps are not released.</p>
+    <p class="note"><strong>Integrity manifest pending.</strong> When <code>file_index.csv</code> is available, it will provide a SHA-256 digest for each released signal file and will be the reference for verifying a download.</p>
+    <p><strong>Total release:</strong> {n(summary.release.total_files)} files &middot; {releaseGb} GB</p>
+  </div></section>
+</Base>
+
+<style>
+  .tree pre { margin: 0; padding: 1.25rem; min-width: 40rem; line-height: 1.55; color: var(--ink-secondary); }
+  .notes-grid { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .column-groups { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .column-groups h4 { margin-bottom: 0.4rem; }
+  .column-groups p { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; }
+  .column-groups code { padding: 0.12rem 0.35rem; border-radius: 3px; background: var(--surface-sunken); overflow-wrap: anywhere; }
+</style>

@@ -1,0 +1,388 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import StatTiles from '../../../../components/StatTiles.astro';
+import AvailabilityChart from '../../../../components/AvailabilityChart.astro';
+import DatasetNav from '../../../../components/DatasetNav.astro';
+import CitationBlock from '../../../../components/CitationBlock.astro';
+import summary from '../../../../data/summary-v2.0.json';
+import { dataset, portal, citations } from '../../../../data/dataset';
+
+/**
+ * DOI resolution target. This URL is frozen: the Zenodo documentation record
+ * and, later, the institutional DataCite DOI both point here, so the page has to
+ * stand alone for a reader arriving from a citation with no other context.
+ */
+
+const [pd, hc] = summary.cohort.groups;
+const n = (value: number) => value.toLocaleString('en-US');
+const gb = (summary.release.total_bytes / 1024 ** 3).toFixed(2);
+const activeDoi = dataset.doi.datacite ?? dataset.doi.zenodo;
+const citation = citations(activeDoi);
+
+const modalityCount = summary.modalities.filter((m) => m.flag !== 'voice_available').length;
+
+const tiles = [
+  { value: n(summary.cohort.total), label: 'Participants' },
+  { value: n(pd.count), label: "Parkinson's disease", accent: 'pd' as const },
+  { value: n(hc.count), label: 'Healthy controls', accent: 'hc' as const },
+  { value: String(modalityCount), label: 'Modalities' },
+  { value: n(summary.release.total_files), label: 'Files', note: `${gb} GB` },
+];
+
+const pending = (value: string | null, fallback = 'Pending') =>
+  value && !value.startsWith('TODO') ? value : fallback;
+
+const facts = [
+  { term: 'Version', value: dataset.version },
+  { term: 'Release date', value: pending(dataset.releaseDate, 'Not yet released') },
+  { term: 'Publisher', value: dataset.publisher },
+  { term: 'Access level', value: dataset.accessLevel },
+  { term: 'License', value: pending(dataset.license, 'Pending institutional decision') },
+  { term: 'DOI', value: pending(activeDoi, 'Pending') },
+  { term: 'Ethics approval', value: pending(dataset.irb, 'Pending') },
+  { term: 'Landing page', value: `${portal.name}${dataset.path}` },
+];
+
+const ageOverall = summary.age.overall!;
+const ageByGroup = summary.age.by_group;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: dataset.title,
+  alternateName: dataset.shortTitle,
+  description: dataset.tagline,
+  version: dataset.version,
+  url: new URL(dataset.path, Astro.site).href,
+  publisher: { '@type': 'Organization', name: dataset.publisher },
+  isAccessibleForFree: false,
+  conditionsOfAccess:
+    'Credentialed access. Requires an approved request and a signed data use agreement.',
+  keywords: [
+    "Parkinson's disease",
+    'digital biomarkers',
+    'smartphone',
+    'voice',
+    'inertial sensors',
+    'screening',
+  ],
+  variableMeasured: summary.modalities.map((m) => m.label),
+};
+---
+
+<Base
+  title={`${dataset.shortTitle} - ${portal.name}`}
+  description={dataset.tagline}
+  canonical={dataset.path}
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
+
+  <nav class="wrap crumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a> <span aria-hidden="true">/</span>
+    <a href="/datasets/">Datasets</a> <span aria-hidden="true">/</span>
+    <span aria-current="page">{dataset.shortTitle}</span>
+  </nav>
+
+  <header class="wrap head">
+    <p class="head__badges">
+      <span class="badge badge--brand">{dataset.accessLevel} access</span>
+      <span class="badge">Version {dataset.version}</span>
+      {dataset.status === 'in-preparation' && <span class="badge">In preparation</span>}
+    </p>
+    <h1>{dataset.title}</h1>
+    <p class="lede prose">{dataset.tagline}</p>
+  </header>
+
+  <DatasetNav />
+
+  {dataset.status === 'in-preparation' && (
+    <div class="wrap">
+      <p class="note note--warn">
+        <strong>This release is not yet public.</strong> The dataset structure is frozen and the
+        figures below are generated from the release files, but the DOI, license and access workflow
+        are still being finalised. Citation text on this page contains placeholders until then.
+      </p>
+    </div>
+  )}
+
+  <section class="section">
+    <div class="wrap stack">
+      <StatTiles tiles={tiles} />
+
+      <div class="split">
+        <div class="prose">
+          <h2>At a glance</h2>
+          <p>
+            CheckPD v2.0 is a real-world, smartphone-based multimodal dataset for Parkinson&rsquo;s
+            disease screening research. Data were collected through the CheckPD application in
+            unsupervised settings; every diagnostic label was confirmed by a movement-disorder
+            specialist at {portal.institution}.
+          </p>
+          <p>
+            The release retains every clinician-confirmed participant with at least one usable
+            assessment rather than only those who completed the full protocol. Uneven modality
+            coverage is a property of real-world acquisition, and is documented through the
+            availability flags in <code>metadata.csv</code> so that users can define their own
+            task-specific cohorts.
+          </p>
+        </div>
+
+        <dl class="facts">
+          {facts.map((fact) => (
+            <div class="facts__row">
+              <dt>{fact.term}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <AvailabilityChart />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <h2>Cohort characteristics</h2>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Group</th>
+              <th scope="col" class="num">n</th>
+              <th scope="col" class="num">Age reported</th>
+              <th scope="col" class="num">Median</th>
+              <th scope="col" class="num">Mean</th>
+              <th scope="col" class="num">Range</th>
+            </tr>
+          </thead>
+          <tbody>
+            {summary.cohort.groups.map((group) => {
+              const stats = ageByGroup[group.label as 'PD' | 'HC']!;
+              return (
+                <tr>
+                  <th scope="row">
+                    <span class="swatch" data-group={group.label} aria-hidden="true"></span>
+                    {group.label === 'PD' ? "Parkinson's disease" : 'Healthy controls'}
+                  </th>
+                  <td class="num">{n(group.count)}</td>
+                  <td class="num">{n(stats.n)}</td>
+                  <td class="num">{stats.median}</td>
+                  <td class="num">{stats.mean}</td>
+                  <td class="num">{stats.min}&ndash;{stats.max}</td>
+                </tr>
+              );
+            })}
+            <tr class="total">
+              <th scope="row">Total</th>
+              <td class="num">{n(summary.cohort.total)}</td>
+              <td class="num">{n(ageOverall.n)}</td>
+              <td class="num">{ageOverall.median}</td>
+              <td class="num">{ageOverall.mean}</td>
+              <td class="num">{ageOverall.min}&ndash;{ageOverall.max}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="note note--warn">
+        <strong>Age completeness.</strong> Age is reported for {n(ageOverall.n)} of{' '}
+        {n(summary.cohort.total)} participants. {n(summary.age.missing)} records have no age, and{' '}
+        {n(summary.age.excluded_implausible)} carry values outside {summary.age.plausible_range[0]}&ndash;
+        {summary.age.plausible_range[1]} years that are treated as data-entry errors and excluded
+        from the figures above. These records are pending clinical review and are not removed from
+        the dataset.
+      </p>
+
+      <p>
+        Participants were recruited across {summary.demographics.province_count} provinces through
+        hospital clinics, community field screening and unsupervised self-download.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <h2>Release contents</h2>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">File</th>
+              <th scope="col" class="num">Rows</th>
+              <th scope="col" class="num">Columns</th>
+            </tr>
+          </thead>
+          <tbody>
+            {summary.tables.map((table) => (
+              <tr>
+                <th scope="row"><code>{table.file}</code></th>
+                <td class="num">{n(table.rows)}</td>
+                <td class="num">{n(table.columns)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Signal files are organised one directory per modality, named{' '}
+        <code>S####_&lt;modality&gt;</code>. Clinical indicators are provided separately in{' '}
+        <code>clinical_scores.csv</code> across {summary.clinical_score_columns.length} instruments.
+      </p>
+
+      <p class="actions">
+        <a class="btn" href={`${dataset.path}files/`}>File structure</a>
+        <a class="btn" href={`${dataset.path}documentation/`}>Documentation</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <h2 id="citation">Citation</h2>
+      <p class="prose">
+        Cite both the dataset and the dataset paper, and state the version used. Older versions
+        remain available and are never overwritten.
+      </p>
+
+      <CitationBlock id="overview-bibtex" label="BibTeX" value={citation.bibtex} />
+
+      <p><a href={`${dataset.path}citation/`}>Vancouver, APA and DOI details &rarr;</a></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <h2>Access</h2>
+      <p class="prose">
+        The full release is available under credentialed access. Requests are reviewed by the data
+        curator; approved researchers receive a time-limited download link and agree not to attempt
+        re-identification or to redistribute the data.
+      </p>
+      <p class="actions">
+        <a class="btn btn--primary" href={`${dataset.path}access/`}>Request access</a>
+        <a class="btn" href="/access/#dua">Read the data use agreement</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .crumbs {
+    padding-top: 1.25rem;
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .crumbs a {
+    color: var(--ink-secondary);
+    text-decoration: none;
+  }
+
+  .crumbs a:hover {
+    color: var(--brand);
+    text-decoration: underline;
+  }
+
+  .head {
+    padding-block: var(--space-4) var(--space-5);
+    max-width: 62rem;
+  }
+
+  .head__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .head h1 {
+    margin-bottom: 0.7rem;
+  }
+
+  .split {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .split h2 {
+    margin-bottom: 0.6rem;
+  }
+
+  .facts {
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface-card);
+    overflow: hidden;
+  }
+
+  .facts__row {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr;
+    gap: 0.75rem;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--line-faint);
+  }
+
+  .facts__row:last-child {
+    border-bottom: 0;
+  }
+
+  .facts dt {
+    color: var(--ink-muted);
+  }
+
+  .facts dd {
+    margin: 0;
+    color: var(--ink-primary);
+    overflow-wrap: anywhere;
+  }
+
+  .swatch {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    margin-right: 0.45rem;
+  }
+
+  .swatch[data-group='PD'] {
+    background: var(--series-pd);
+  }
+
+  .swatch[data-group='HC'] {
+    background: var(--series-hc);
+  }
+
+  .total th,
+  .total td {
+    font-weight: 600;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  @media (max-width: 800px) {
+    .split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

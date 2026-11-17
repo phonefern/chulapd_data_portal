@@ -1,0 +1,25 @@
+{
+  "name": "checkpd-data-portal",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "CheckPD Data Portal - Parkinson's Disease Center of Excellence, King Chulalongkorn Memorial Hospital / Thai Red Cross Society",
+  "scripts": {
+    "summary": "python scripts/build_portal_summary.py",
+    "summary:v2.0": "python scripts/build_summary.py",
+    "summary:v2.1": "python scripts/build_portal_summary.py",
+    "brand": "python scripts/build_brand_assets.py",
+    "dev": "npm run summary && astro dev",
+    "build": "npm run summary && astro build",
+    "build:v2.1": "npm run summary:v2.1 && astro build",
+    "build:demo": "npm run summary && node scripts/build-demo.mjs",
+    "preview": "astro preview",
+    "check:routes": "python scripts/check_routes.py",
+    "astro": "astro",
+    "share": "npm run summary && node scripts/share.mjs",
+    "cohort": "npm run summary:v2.1"
+  },
+  "dependencies": {
+    "astro": "^5.14.1"
+  }
+}

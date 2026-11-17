@@ -1,0 +1,161 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { currentDataset as dataset } from '../../../data/dataset';
+
+const commitments = [
+  {
+    title: 'กำกับเวอร์ชันทุกชุดข้อมูล',
+    text: 'ทุกชุดข้อมูลที่เผยแพร่มีหมายเลขเวอร์ชันตายตัวและมีบันทึกถาวร',
+  },
+  {
+    title: 'ตรึงโครงสร้างไฟล์',
+    text: 'โครงสร้างไฟล์ที่เผยแพร่แล้วจะถูกเก็บรักษาไว้ ไม่มีการเขียนทับหรือแก้ไขย้อนหลังโดยเงียบ ๆ',
+  },
+  {
+    title: 'ระบุเงื่อนไขการเข้าถึงอย่างชัดเจน',
+    text: 'ระดับการเข้าถึง ขั้นตอนการขอ และความรับผิดชอบของผู้ใช้ข้อมูล แสดงไว้อย่างเปิดเผย',
+  },
+  {
+    title: 'คงอยู่ในระยะยาว',
+    text: 'URL ของหน้าชุดข้อมูลจะไม่เปลี่ยน เพื่อให้การอ้างอิงและการทำซ้ำงานวิจัยยังใช้ได้เสมอ',
+  },
+];
+
+const pending = [
+  { label: 'เลขที่รับรองจริยธรรมการวิจัย', value: 'อยู่ระหว่างดำเนินการ' },
+  { label: 'สัญญาอนุญาตการใช้ข้อมูล', value: 'อยู่ระหว่างการพิจารณาของสถาบัน' },
+  { label: 'ประกาศตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล', value: 'อยู่ระหว่างจัดทำ' },
+];
+---
+
+<Base
+  lang="th"
+  title="เกี่ยวกับเรา — CheckPD Data Portal"
+  description="เกี่ยวกับ CheckPD Data Portal หน่วยงานที่ดูแล และหลักการของคลังข้อมูล"
+>
+  <header class="wrap page-head">
+    <p class="eyebrow">เกี่ยวกับพอร์ทัล</p>
+    <h1>คลังข้อมูลของสถาบันสำหรับงานวิจัยตัวบ่งชี้ทางชีวภาพดิจิทัล</h1>
+    <p class="lede prose">
+      CheckPD Data Portal เก็บรักษาชุดข้อมูลวิจัยที่มีการยืนยันการวินิจฉัยโดยแพทย์ พร้อมเอกสารประกอบ
+      เป็นคลังข้อมูลของสถาบันที่มีการดูแลจัดการ ไม่ใช่พื้นที่ฝากไฟล์ทั่วไป
+    </p>
+  </header>
+
+  <section class="section section--first">
+    <div class="wrap about-grid">
+      <div class="stack">
+        <div>
+          <p class="eyebrow">หน่วยงานผู้ดูแล</p>
+          <h2>ศูนย์ความเป็นเลิศทางการแพทย์โรคพาร์กินสันและกลุ่มโรคความเคลื่อนไหวผิดปกติ</h2>
+        </div>
+        <p>โรงพยาบาลจุฬาลงกรณ์ สภากาชาดไทย</p>
+        <p class="prose">
+          พอร์ทัลนี้รองรับงานวิจัยด้านโรคพาร์กินสันและโรคทางระบบประสาทที่เกี่ยวข้อง
+          และออกแบบเผื่อไว้สำหรับชุดข้อมูลในอนาคตที่อยู่ในขอบเขตและมาตรฐานการกำกับดูแลเดียวกัน
+        </p>
+      </div>
+
+      <aside class="card">
+        <p class="eyebrow">ชุดข้อมูลปัจจุบัน</p>
+        <h2>{dataset.shortTitle}</h2>
+        <p class="about-card__text">
+          ชุดข้อมูลหลากรูปแบบจากสมาร์ตโฟนในสภาพการใช้งานจริง สำหรับการวิจัยการคัดกรองโรคพาร์กินสัน
+        </p>
+        <a href={dataset.path}>ดูรายละเอียดชุดข้อมูล (ภาษาอังกฤษ) &rarr;</a>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div>
+        <p class="eyebrow">หลักการของคลังข้อมูล</p>
+        <h2>ออกแบบให้ใช้อ้างอิงได้ในระยะยาว</h2>
+      </div>
+      <div class="commitment-grid">
+        {commitments.map((item) => (
+          <article class="card">
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div>
+        <p class="eyebrow">การกำกับดูแล</p>
+        <h2>รายการที่ยังไม่สรุป</h2>
+      </div>
+      <p class="prose">
+        รายการต่อไปนี้เป็นการตัดสินใจระดับสถาบันและคณะกรรมการจริยธรรม ยังไม่มีข้อสรุป
+        และจะแสดงสถานะตามจริงจนกว่าจะได้รับการยืนยัน
+      </p>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">รายการ</th>
+              <th scope="col">สถานะ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pending.map((row) => (
+              <tr>
+                <th scope="row">{row.label}</th>
+                <td>{row.value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page-head h1,
+  h2,
+  h3 {
+    line-height: 1.4;
+  }
+
+  .about-grid {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .about-card__text {
+    color: var(--ink-secondary);
+    font-size: 0.9rem;
+    margin-block: 0.5rem 0.8rem;
+  }
+
+  .commitment-grid {
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  }
+
+  .commitment-grid h3 {
+    margin-bottom: 0.35rem;
+  }
+
+  .commitment-grid p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--ink-secondary);
+    line-height: 1.7;
+  }
+
+  @media (max-width: 800px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

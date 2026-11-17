@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../../../layouts/Base.astro';
+import summary from '../../../../../data/summary-v2.0.json';
+import { dataset, portal } from '../../../../../data/dataset';
+import DatasetNav from '../../../../../components/DatasetNav.astro';
+
+const entries = await getCollection('modalities');
+const bySlug = new Map(entries.map((entry) => [entry.data.slug, entry]));
+const n = (value: number) => value.toLocaleString('en-US');
+---
+
+<Base title={`Documentation - ${dataset.shortTitle} - ${portal.name}`} description={`Technical documentation for every modality in ${dataset.shortTitle}.`}>
+  <nav class="wrap crumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a><span aria-hidden="true">/</span><a href="/datasets/">Datasets</a><span aria-hidden="true">/</span>
+    <a href={dataset.path}>{dataset.shortTitle}</a><span aria-hidden="true">/</span><span aria-current="page">Documentation</span>
+  </nav>
+
+  <header class="wrap page-head">
+    <p class="eyebrow">{dataset.shortTitle}</p>
+    <h1>Documentation</h1>
+    <p class="lede prose">Protocols, data contracts and quality-control notes for interpreting each released modality. Coverage varies by participant and is documented in <code>metadata.csv</code>.</p>
+  </header>
+
+  <DatasetNav />
+
+  <section class="section section--first"><div class="wrap stack">
+    <div><p class="eyebrow">Modalities</p><h2>Data guides</h2></div>
+    <div class="doc-grid">{dataset.modalityDocs.map((doc) => {
+      const entry = bySlug.get(doc.slug);
+      const modality = summary.modalities.find((item) => item.flag === entry?.data.flag);
+      return <article class="card doc-card">
+        <div class="doc-card__head"><h3><a href={`${dataset.path}documentation/${doc.slug}/`}>{doc.label}</a></h3>{entry?.data.status === 'partial' && <span class="badge">Partial</span>}</div>
+        <p>{doc.blurb}</p>
+        <p class="doc-card__meta">{modality ? `${n(modality.total)} participants with data` : 'Coverage Pending'}</p>
+      </article>;
+    })}</div>
+  </div></section>
+
+  <section class="section"><div class="wrap stack">
+    <div><p class="eyebrow">Release references</p><h2>Supporting documentation</h2></div>
+    <div class="reference-list">
+      <article><div><h3><code>data_dictionary.csv</code></h3><p>Field definitions, types, allowed values, units and missing-value rules.</p></div><span class="badge">Pending</span></article>
+      <article><div><h3><code>file_index.csv</code></h3><p>Per-file size and SHA-256 integrity manifest.</p></div><span class="badge">Pending</span></article>
+      <article><div><h3>Technical validation report</h3><p>Release-level schema, completeness, signal and de-identification checks.</p></div><span class="badge">Pending publication</span></article>
+      <article><div><h3>Preprocessing protocol</h3><p>Detailed processing decisions and clinical acquisition protocols.</p></div><span class="badge">Pending clinical team</span></article>
+    </div>
+  </div></section>
+</Base>
+
+<style>
+  .doc-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .doc-card { display: flex; flex-direction: column; }
+  .doc-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+  .doc-card p { margin: 0.55rem 0 0; color: var(--ink-secondary); }
+  .doc-card__meta { margin-top: auto !important; padding-top: 1rem; font-size: 0.82rem; color: var(--ink-muted) !important; }
+  .reference-list { border-block: 1px solid var(--line); }
+  .reference-list article { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding-block: 1rem; border-bottom: 1px solid var(--line-faint); }
+  .reference-list article:last-child { border-bottom: 0; }
+  .reference-list p { margin: 0.2rem 0 0; color: var(--ink-secondary); }
+  @media (max-width: 560px) { .reference-list article { flex-direction: column; } }
+</style>

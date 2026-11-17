@@ -1,0 +1,149 @@
+---
+import Base from '../layouts/Base.astro';
+import StatTiles from '../components/StatTiles.astro';
+import summary from '../data/summary.json';
+import { currentDataset as dataset, portal } from '../data/dataset';
+
+const [pd, hc] = summary.cohort.groups;
+const n = (value: number) => value.toLocaleString('en-US');
+const gb = (summary.release.total_bytes / 1024 ** 3).toFixed(2);
+
+const modalityCount = summary.modalities.filter((m) => m.flag !== 'voice_available').length;
+
+const tiles = [
+  { value: n(summary.cohort.total), label: 'Participants' },
+  { value: n(pd.count), label: "Parkinson's disease", accent: 'pd' as const },
+  { value: n(hc.count), label: 'Healthy controls', accent: 'hc' as const },
+  { value: String(modalityCount), label: 'Assessment modalities' },
+  { value: n(summary.release.total_files), label: 'Release files', note: `${gb} GB` },
+  { value: String(summary.demographics.province_count), label: 'Provinces represented' },
+];
+
+const levels = [
+  {
+    level: 'Level 1',
+    name: 'Public metadata',
+    body: 'Dataset description, cohort and modality summaries, documentation, data dictionary and citation information. No registration required.',
+  },
+  {
+    level: 'Level 2',
+    name: 'Registered access',
+    body: 'Example files, a small sample dataset and code examples, after basic account registration.',
+  },
+  {
+    level: 'Level 3',
+    name: 'Credentialed access',
+    body: 'The full release: processed modality files and the complete metadata table. Requires an approved request and a signed data use agreement.',
+  },
+];
+---
+
+<Base
+  title={`${portal.name} - ${portal.operator}`}
+  description="Institutional repository for clinician-confirmed, smartphone-based digital biomarker datasets in Parkinson's disease."
+>
+  <section class="hero">
+    <div class="wrap hero__inner">
+      <p class="eyebrow">{portal.operator}</p>
+      <h1>Clinician-confirmed digital biomarker datasets for Parkinson&rsquo;s disease research</h1>
+      <p class="lede prose">
+        The {portal.name} publishes versioned, documented research datasets collected through
+        the CheckPD smartphone platform at {portal.institution}. Releases are frozen, citable and
+        available to researchers under controlled access.
+      </p>
+      <p class="hero__actions">
+        <a class="btn btn--primary" href={dataset.path}>Browse {dataset.shortTitle}</a>
+        <a class="btn" href="/access/">How access works</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div>
+        <p class="eyebrow">Latest dataset · In preparation</p>
+        <h2>{dataset.title}</h2>
+      </div>
+
+      <StatTiles tiles={tiles} />
+
+      <p class="prose">
+        {dataset.tagline} Every participant carries a specialist-confirmed label. Modality coverage
+        is uneven by design &mdash; the release keeps all labelled participants with at least one
+        usable assessment, and documents what each one has through availability flags in
+        <code>metadata.csv</code>.
+      </p>
+
+      <p>
+        <a href={dataset.path}>Dataset overview, voice quality control and modality coverage &rarr;</a>
+      </p>
+      <p class="note">v2.1 is in preparation. Download, DOI and release approval are pending.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div>
+        <p class="eyebrow">Access</p>
+        <h2>Three levels of access</h2>
+      </div>
+
+      <div class="levels">
+        {levels.map((item) => (
+          <article class="card level">
+            <p class="eyebrow">{item.level}</p>
+            <h3>{item.name}</h3>
+            <p class="level__body">{item.body}</p>
+          </article>
+        ))}
+      </div>
+
+      <p class="note note--info">
+        CheckPD contains health-related questionnaire responses and sensor
+        recordings. It is released under credentialed access rather than open download. Files carry
+        no direct identifiers and no absolute timestamps.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    border-bottom: 1px solid var(--line-faint);
+    background:
+      radial-gradient(60rem 24rem at 12% -8rem, var(--brand-tint), transparent 70%),
+      var(--surface-page);
+  }
+
+  .hero__inner {
+    padding-block: clamp(2.5rem, 7vw, 5rem);
+    max-width: 52rem;
+  }
+
+  .hero h1 {
+    margin-block: 0.5rem 0.9rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.6rem;
+  }
+
+  .levels {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  }
+
+  .level h3 {
+    margin-block: 0.15rem 0.4rem;
+  }
+
+  .level__body {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--ink-secondary);
+  }
+</style>

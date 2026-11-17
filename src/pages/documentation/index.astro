@@ -1,0 +1,74 @@
+---
+import Base from '../../layouts/Base.astro';
+import summary from '../../data/summary-v2.0.json';
+import { dataset, portal } from '../../data/dataset';
+
+const metadata = summary.tables.find((table) => table.file === 'metadata.csv');
+const requiredColumns = [
+  'voiceAhh_available',
+  'voiceYPL_available',
+  'voice_available',
+  'tremor_resting_available',
+  'questionnaire_available',
+];
+const missing = requiredColumns.filter((column) => !metadata?.column_names.includes(column));
+if (missing.length) throw new Error(`Documentation example uses missing metadata columns: ${missing.join(', ')}`);
+
+const resources = [
+  { title: 'Release README', text: 'Purpose, release scope and top-level structure.' },
+  { title: 'Data dictionary', text: 'Column definitions, types, encodings and missing-value notes.' },
+  { title: 'File index', text: 'Release contents, paths and file-level orientation.' },
+  { title: 'Modality documentation', text: 'Acquisition files, schemas and known limitations by task.' },
+  { title: 'Validation report', text: 'Public technical checks and release-level quality findings.' },
+  { title: 'Version history', text: 'Changes, stability rules and permanent release URLs.' },
+];
+
+const example = `import pandas as pd
+meta = pd.read_csv("metadata.csv")
+
+# Voice-only cohort
+voice = meta.query("voiceAhh_available == 1 and voiceYPL_available == 1")
+
+# Multimodal cohort
+multi = meta.query(
+    "voice_available == 1 and tremor_resting_available == 1 "
+    "and questionnaire_available == 1"
+)`;
+---
+
+<Base title={`Documentation - ${portal.name}`} description="Start points for CheckPD release documentation, schemas, files and version history.">
+  <header class="wrap page-head">
+    <p class="eyebrow">Documentation hub</p>
+    <h1>Work with a CheckPD release</h1>
+    <p class="lede prose">Find the release-level materials you need, then move into the dataset-specific documentation for exact schemas and modality details.</p>
+  </header>
+
+  <section class="section section--first"><div class="wrap stack">
+    <div class="resource-grid">{resources.map((resource) => <article class="card resource"><h2>{resource.title}</h2><p>{resource.text}</p></article>)}</div>
+    <div class="actions"><a class="btn btn--primary" href="/datasets/checkpd/v2.0/documentation/">Open {dataset.shortTitle} documentation</a><a class="btn" href="/datasets/checkpd/versions/">View version history</a></div>
+  </div></section>
+
+  <section class="section"><div class="wrap guide-layout">
+    <div class="stack">
+      <div><p class="eyebrow">Orientation</p><h2>Start with metadata.csv</h2></div>
+      <p><code>metadata.csv</code> is the release index. Join release tables and files on <code>subject_id</code>, and use the canonical <code>*_available</code> flags to create a task-specific cohort without excluding participants who completed other modalities.</p>
+      <p class="note note--info">Build the cohort around the measurements required by your analysis. Availability flags document partial coverage; they are not a reason to restrict the complete release.</p>
+    </div>
+    <div class="code-card"><div class="code-card__head"><span>Python</span><span>Canonical v2.0 columns</span></div><pre><code>{example}</code></pre></div>
+  </div></section>
+</Base>
+
+<style>
+  .resource-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
+  .resource { box-shadow: none; }
+  .resource p { margin-top: var(--space-2); color: var(--ink-secondary); }
+  .actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .guide-layout { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: var(--space-5); align-items: start; }
+  .guide-layout > .stack > p:not(.note) { color: var(--ink-secondary); }
+  .code-card { min-width: 0; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface-sunken); overflow: hidden; }
+  .code-card__head { display: flex; justify-content: space-between; gap: var(--space-2); padding: 0.65rem var(--space-3); border-bottom: 1px solid var(--line); color: var(--ink-muted); font-size: 0.75rem; }
+  .code-card pre { overflow-x: auto; margin: 0; padding: var(--space-4); color: var(--ink-primary); }
+  @media (max-width: 820px) { .resource-grid { grid-template-columns: 1fr 1fr; } .guide-layout { grid-template-columns: 1fr; } }
+  @media (max-width: 520px) { .resource-grid { grid-template-columns: 1fr; } }
+</style>
+

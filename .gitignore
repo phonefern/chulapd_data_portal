@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+__pycache__/
+*.py[cod]
+src/data/summary.json
+src/data/summary-v2.0.json
+src/data/summary.json.tmp
+src/data/summary-v*.json

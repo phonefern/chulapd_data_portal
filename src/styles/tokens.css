@@ -1,0 +1,442 @@
+/* CheckPD Data Portal - design tokens.
+ *
+ * Light is the base and default palette. Dark redefines only the tokens under
+ * an explicit [data-theme] stamp set by the user-facing toggle.
+ *
+ * Chart series colours come from the validated categorical palette
+ * (slot 1 blue = PD, slot 2 orange = HC). Brand red is chrome only and never
+ * enters a plot area, so it can't be read as a series or a status.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* surfaces
+     The page is pure white, so the whole light ramp is neutral grey. Warm
+     off-white neutrals read as dirty against #fff — they only worked when the
+     page itself was warm. */
+  --surface-page: #ffffff;
+  --surface-card: #ffffff;
+  --surface-sunken: #f7f7f8;
+  --surface-inverse: #1a1a1d;
+
+  /* ink (on white: primary 18.5:1, secondary 7.7:1, muted 4.8:1) */
+  --ink-primary: #15151a;
+  --ink-secondary: #52525c;
+  --ink-muted: #71717c;
+  --ink-inverse: #ffffff;
+
+  /* lines */
+  --line-strong: #c6c6cd;
+  --line: #e2e2e7;
+  --line-faint: #eeeef1;
+
+  /* brand - Thai Red Cross crimson, used for chrome and links only */
+  --brand: #9e1b32;
+  --brand-hover: #7d1527;
+  --brand-tint: #fbeef0;
+  --brand-ink: #ffffff;
+
+  /* chart series (validated: CVD dE 24.7, normal dE 33.6, both >= 3:1) */
+  --series-pd: #2a78d6;
+  --series-hc: #eb6834;
+  --series-total: #7a7367;
+  --series-track: #ebebef;
+
+  /* status */
+  --status-warn: #8a5a00;
+  --status-warn-bg: #fdf3e0;
+  --status-warn-line: #e8cd97;
+  --status-info-bg: #eef4fc;
+  --status-info-line: #c3d8f2;
+
+  /* typography */
+  /* Thai faces are listed explicitly after the Latin stack: the site is served
+     from institutional infrastructure and pulls no webfont, so Thai text falls
+     back to whatever the reader's OS ships. */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans Thai', 'Leelawadee UI', 'Sarabun',
+    'Thonburi', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
+
+  /* scale */
+  --gutter: clamp(1rem, 3vw, 2rem);
+  --measure: 68ch;
+  --content-wide: 1180px;
+  --space-1: 0.4rem;
+  --space-2: 0.75rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.25rem;
+  --space-6: 3.25rem;
+  --radius: 6px;
+  --radius-lg: 8px;
+  --shadow: 0 1px 2px rgb(18 18 24 / 5%), 0 6px 18px rgb(18 18 24 / 4%);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --surface-page: #101013;
+  --surface-card: #17171b;
+  --surface-sunken: #1f1f24;
+  --surface-inverse: #f2f2f4;
+
+  --ink-primary: #f4f4f6;
+  --ink-secondary: #b7b7bf;
+  --ink-muted: #8c8c96;
+  --ink-inverse: #101013;
+
+  --line-strong: #4b4b54;
+  --line: #2e2e35;
+  --line-faint: #24242a;
+
+  --brand: #e8697f;
+  --brand-hover: #f28a9c;
+  --brand-tint: #2a1319;
+  --brand-ink: #101013;
+
+  --series-pd: #4d93e8;
+  --series-hc: #e2662d;
+  --series-total: #97979f;
+  --series-track: #2b2b32;
+
+  --status-warn: #e8bd6a;
+  --status-warn-bg: #2a2215;
+  --status-warn-line: #4d3f21;
+  --status-info-bg: #17212e;
+  --status-info-line: #2a3d55;
+
+  --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 12px rgb(0 0 0 / 24%);
+}
+
+/* --- base ---------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--ink-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: var(--brand);
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+a:hover {
+  color: var(--brand-hover);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.25;
+  letter-spacing: -0.011em;
+  margin: 0;
+  font-weight: 650;
+}
+
+h1 {
+  font-size: clamp(1.9rem, 3.5vw, 2.55rem);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+}
+
+h3 {
+  font-size: 1.02rem;
+}
+
+p {
+  margin: 0;
+}
+
+code,
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Thai stacks vowel and tone marks above and below the baseline, so it needs
+   more leading than Latin at the same size or the marks collide with the line
+   above. Headings are hit hardest because their leading is tightest. */
+:lang(th) {
+  line-height: 1.75;
+}
+
+:lang(th) h1,
+:lang(th) h2,
+:lang(th) h3,
+:lang(th) h4 {
+  line-height: 1.45;
+}
+
+:lang(th) .lede {
+  line-height: 1.85;
+}
+
+/* --- layout primitives --------------------------------------------------- */
+
+.wrap {
+  width: 100%;
+  max-width: var(--content-wide);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.prose {
+  max-width: var(--measure);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap, var(--space-3));
+}
+
+.section {
+  padding-block: clamp(2rem, 4.5vw, var(--space-6));
+}
+
+.section + .section {
+  padding-top: 0;
+}
+
+.section + .section > .wrap {
+  border-top: 1px solid var(--line);
+  padding-top: clamp(2rem, 4.5vw, var(--space-6));
+}
+
+.section--first {
+  padding-top: var(--space-4);
+}
+
+.page-head {
+  padding-block: var(--space-4) var(--space-5);
+  max-width: 62rem;
+}
+
+.page-head h1 {
+  margin-top: var(--space-1);
+}
+
+.page-head .lede {
+  margin-top: var(--space-2);
+}
+
+.crumbs {
+  padding-top: var(--space-3);
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.crumbs a {
+  color: var(--ink-secondary);
+  text-decoration: none;
+}
+
+.crumbs a:hover {
+  color: var(--brand);
+  text-decoration: underline;
+}
+
+.eyebrow {
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+.lede {
+  font-size: clamp(1rem, 1.6vw, 1.12rem);
+  line-height: 1.6;
+  color: var(--ink-secondary);
+}
+
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: clamp(1rem, 2.2vw, 1.4rem);
+  box-shadow: var(--shadow);
+}
+
+/* --- tables -------------------------------------------------------------- */
+
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--line-faint);
+  white-space: nowrap;
+}
+
+thead th {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  font-weight: 600;
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--line);
+}
+
+tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.num {
+  text-align: right;
+}
+
+/* --- badges & notes ------------------------------------------------------ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  color: var(--ink-secondary);
+  white-space: nowrap;
+}
+
+.badge--brand {
+  background: var(--brand-tint);
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.note {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--ink-muted);
+  border-radius: var(--radius);
+  background: var(--surface-sunken);
+  padding: 0.95rem 1rem;
+  font-size: 0.9rem;
+  color: var(--ink-secondary);
+}
+
+.note--warn {
+  background: var(--status-warn-bg);
+  border-color: var(--status-warn-line);
+  border-left-color: var(--status-warn);
+  color: var(--ink-primary);
+}
+
+.note--info {
+  background: var(--status-info-bg);
+  border-color: var(--status-info-line);
+  border-left-color: var(--series-pd);
+  color: var(--ink-primary);
+}
+
+.note strong {
+  color: var(--ink-primary);
+}
+
+/* --- buttons ------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.65rem;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--surface-card);
+  color: var(--ink-primary);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 550;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn:hover {
+  border-color: var(--ink-muted);
+  color: var(--ink-primary);
+}
+
+.btn--primary {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--brand-ink);
+}
+
+.btn--primary:hover {
+  background: var(--brand-hover);
+  border-color: var(--brand-hover);
+  color: var(--brand-ink);
+}
+
+@media (max-width: 640px) {
+  .section,
+  .section + .section > .wrap {
+    padding-top: var(--space-5);
+  }
+
+  .section {
+    padding-bottom: var(--space-5);
+  }
+
+  .page-head {
+    padding-block: var(--space-3) var(--space-4);
+  }
+}

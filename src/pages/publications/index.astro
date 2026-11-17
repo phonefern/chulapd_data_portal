@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import { dataset, portal } from '../../data/dataset';
+
+const publications = [
+  {
+    title: `${dataset.shortTitle} dataset paper`,
+    status: 'In preparation',
+    authors: 'Pending',
+    venue: 'Pending',
+    year: 'Pending',
+    doi: 'Pending',
+    datasetVersion: dataset.version,
+    citation: 'Pending',
+  },
+];
+---
+
+<Base title={`Publications - ${portal.name}`} description="Research outputs connected to datasets in the CheckPD Data Portal.">
+  <header class="wrap page-head">
+    <p class="eyebrow">Research outputs</p>
+    <h1>Publications</h1>
+    <p class="lede prose">This catalogue will connect each research output to the exact dataset version used, its DOI and a reusable citation.</p>
+  </header>
+
+  <section class="section section--first"><div class="wrap stack">
+    <div><p class="eyebrow">Current work</p><h2>In preparation</h2></div>
+    <div class="publication-list">{publications.map((publication) => <article class="publication card">
+      <div class="publication__head"><div><p class="eyebrow">Dataset paper</p><h3>{publication.title}</h3></div><span class="badge badge--brand">{publication.status}</span></div>
+      <dl>
+        <div><dt>Authors</dt><dd>{publication.authors}</dd></div>
+        <div><dt>Journal or conference</dt><dd>{publication.venue}</dd></div>
+        <div><dt>Year</dt><dd>{publication.year}</dd></div>
+        <div><dt>DOI</dt><dd>{publication.doi}</dd></div>
+        <div><dt>Dataset version</dt><dd><a href={dataset.path}>{publication.datasetVersion}</a></dd></div>
+        <div><dt>Citation format</dt><dd>{publication.citation}</dd></div>
+      </dl>
+    </article>)}</div>
+    <p class="note note--warn"><strong>Bibliographic details are Pending.</strong> No provisional authors, venue, year, DOI or paper citation is published before the manuscript record is confirmed.</p>
+  </div></section>
+
+  <section class="section"><div class="wrap external">
+    <div class="stack"><div><p class="eyebrow">Community research</p><h2>Publications using this dataset</h2></div><p class="prose">No external publications have been confirmed in this repository. Researchers are asked to notify the curator when their work is published so the verified record can be added here.</p></div>
+    <aside class="card"><p class="eyebrow">Citing the release</p><h3>Use the dataset citation</h3><p>Until the dataset paper is available, cite the versioned dataset record directly.</p><a href="/datasets/checkpd/v2.0/citation/">Open citation guidance</a></aside>
+  </div></section>
+</Base>
+
+<style>
+  .publication-list { display: grid; gap: var(--space-3); }
+  .publication { box-shadow: none; }
+  .publication__head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); }
+  .publication h3 { margin-top: var(--space-1); }
+  .publication dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: var(--space-4) 0 0; border-top: 1px solid var(--line); }
+  .publication dl div { min-width: 0; padding: var(--space-3) var(--space-3) 0 0; }
+  .publication dt { font-size: 0.78rem; color: var(--ink-muted); }
+  .publication dd { margin: 0.25rem 0 0; font-weight: 600; overflow-wrap: anywhere; }
+  .external { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 0.65fr); gap: var(--space-5); align-items: start; }
+  .external aside { box-shadow: none; }
+  .external aside h3, .external aside p, .external aside a { margin-top: var(--space-2); }
+  @media (max-width: 760px) { .publication dl { grid-template-columns: 1fr 1fr; } .external { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) { .publication__head { flex-direction: column; } .publication dl { grid-template-columns: 1fr; } }
+</style>
+

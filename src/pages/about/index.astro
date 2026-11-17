@@ -1,0 +1,58 @@
+---
+import Base from '../../layouts/Base.astro';
+import { currentDataset as dataset, portal } from '../../data/dataset';
+
+const commitments = [
+  { title: 'Versioned releases', text: 'Every published release has a fixed version and permanent record.' },
+  { title: 'Frozen structures', text: 'Published file structures are preserved rather than silently rewritten.' },
+  { title: 'Documented access', text: 'Access level, request path and expected researcher responsibilities stay visible.' },
+  { title: 'Long-term availability', text: 'Dataset landing pages remain stable for citations and reproducible research.' },
+];
+---
+
+<Base title={`About - ${portal.name}`} description={`About ${portal.name}, its institutional operator and repository commitments.`}>
+  <header class="wrap page-head">
+    <p class="eyebrow">About the portal</p>
+    <h1>An institutional home for digital biomarker datasets</h1>
+    <p class="lede prose">{portal.name} preserves clinician-confirmed research datasets and their documentation. It is a curated institutional repository, not a general-purpose download host.</p>
+  </header>
+
+  <section class="section section--first"><div class="wrap about-grid">
+    <div class="stack"><div><p class="eyebrow">Operator</p><h2>{portal.operator}</h2></div><p>{portal.institution}</p><p class="prose">The portal supports Parkinson&rsquo;s disease and related neurological digital biomarker research, with room for future datasets that fit the same institutional scope and governance standards.</p></div>
+    <aside class="card"><p class="eyebrow">Current collection</p><h2>{dataset.shortTitle}</h2><p>{dataset.tagline}</p><a href={dataset.path}>View the dataset record</a></aside>
+  </div></section>
+
+  <section class="section"><div class="wrap stack">
+    <div><p class="eyebrow">Repository commitments</p><h2>Designed for durable research use</h2></div>
+    <div class="commitment-grid">{commitments.map((item) => <article><h3>{item.title}</h3><p>{item.text}</p></article>)}</div>
+  </div></section>
+
+  <section class="section"><div class="wrap governance">
+    <div class="stack"><div><p class="eyebrow">Governance</p><h2>Institutional details remain Pending</h2></div><p class="prose">The repository will publish final governance details when they are approved. No provisional legal or ethics language is presented as settled policy.</p></div>
+    <dl class="status-list">
+      <div><dt>IRB approval number</dt><dd>Pending</dd></div>
+      <div><dt>PDPA statement</dt><dd>Pending</dd></div>
+      <div><dt>Dataset license</dt><dd>Pending</dd></div>
+    </dl>
+  </div></section>
+</Base>
+
+<style>
+  .about-grid, .governance { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(17rem, 0.7fr); gap: var(--space-5); align-items: start; }
+  .about-grid > .stack > p { color: var(--ink-secondary); }
+  .about-grid aside { box-shadow: none; border-top: 3px solid var(--brand); }
+  .about-grid aside h2, .about-grid aside p, .about-grid aside a { margin-top: var(--space-2); }
+  .commitment-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 1px solid var(--line); }
+  .commitment-grid article { padding: var(--space-4); border-right: 1px solid var(--line); }
+  .commitment-grid article:first-child { padding-left: 0; }
+  .commitment-grid article:last-child { padding-right: 0; border-right: 0; }
+  .commitment-grid p { margin-top: var(--space-2); color: var(--ink-secondary); }
+  .status-list { margin: 0; border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .status-list div { display: flex; justify-content: space-between; gap: var(--space-3); padding: 0.75rem var(--space-3); border-bottom: 1px solid var(--line-faint); }
+  .status-list div:last-child { border-bottom: 0; }
+  .status-list dt { color: var(--ink-muted); }
+  .status-list dd { margin: 0; font-weight: 650; color: var(--status-warn); }
+  @media (max-width: 820px) { .about-grid, .governance { grid-template-columns: 1fr; } .commitment-grid { grid-template-columns: 1fr 1fr; } .commitment-grid article:nth-child(2) { border-right: 0; } .commitment-grid article:nth-child(n+3) { border-top: 1px solid var(--line); } .commitment-grid article:nth-child(3) { padding-left: 0; } }
+  @media (max-width: 520px) { .commitment-grid { grid-template-columns: 1fr; } .commitment-grid article, .commitment-grid article:first-child, .commitment-grid article:last-child, .commitment-grid article:nth-child(3) { padding: var(--space-3) 0; border: 0; border-bottom: 1px solid var(--line); } .commitment-grid article:last-child { border-bottom: 0; } }
+</style>
+

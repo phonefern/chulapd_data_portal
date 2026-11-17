@@ -1,0 +1,215 @@
+---
+import chulapdMark from '../content/img/chulapd-mark.png';
+import { NAV, UI, counterpart, langOf, type Lang } from '../data/i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { pathname } = Astro.url;
+const lang: Lang = Astro.props.lang ?? langOf(pathname);
+const t = UI[lang];
+const nav = NAV[lang];
+const other = counterpart(pathname);
+const home = lang === 'th' ? '/th/' : '/';
+
+const isCurrent = (href: string) =>
+  href === '/' || href === '/th/' ? pathname === href : pathname.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="brand" href={home}>
+      <img
+        class="brand__mark"
+        src={chulapdMark.src}
+        width="26"
+        height="26"
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+      />
+      <span class="brand__text">
+        <span class="brand__name">{t.brandName}</span>
+        <span class="brand__org">{t.brandOrg}</span>
+      </span>
+    </a>
+
+    <nav class="site-nav" aria-label={t.primaryNav}>
+      {nav.map((item) => (
+        <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="site-header__tools">
+      <a class="lang-switch" href={other} lang={lang === 'th' ? 'en' : 'th'} title={t.switchToLabel}>
+        {t.switchTo}
+      </a>
+
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label={t.themeToggle}>
+        <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
+          <path
+            d="M15.5 12.6A6.3 6.3 0 0 1 7.4 4.5a6.3 6.3 0 1 0 8.1 8.1Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--surface-page) 90%, transparent);
+    backdrop-filter: saturate(180%) blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 60px;
+    padding-block: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--ink-primary);
+    margin-right: auto;
+  }
+
+  /* The source mark is 60x60 with an opaque near-white interior, so it is
+     displayed small and on its own white plate rather than being allowed to
+     float as a white square on the dark surface. */
+  .brand__mark {
+    width: 26px;
+    height: 26px;
+    flex: none;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  .brand__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+  }
+
+  .brand__name {
+    font-weight: 650;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+  }
+
+  .brand__org {
+    font-size: 0.7rem;
+    color: var(--ink-muted);
+  }
+
+  .site-nav {
+    display: flex;
+    gap: 0.15rem;
+    flex-wrap: wrap;
+  }
+
+  .site-nav a {
+    padding: 0.35rem 0.6rem;
+    border-radius: var(--radius);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .site-nav a:hover {
+    background: var(--surface-sunken);
+    color: var(--ink-primary);
+  }
+
+  .site-nav a[aria-current='page'] {
+    color: var(--brand);
+    background: var(--brand-tint);
+  }
+
+  .site-header__tools {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: none;
+  }
+
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding-inline: 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-card);
+    color: var(--ink-secondary);
+    font-size: 0.82rem;
+    font-weight: 550;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .lang-switch:hover {
+    color: var(--ink-primary);
+    border-color: var(--line-strong);
+  }
+
+  .theme-toggle {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    flex: none;
+    padding: 0;
+    border: 1px solid #e2e2e7;
+    border-radius: var(--radius);
+    background: #fff;
+    color: #52525c;
+    cursor: pointer;
+  }
+
+  .theme-toggle:hover {
+    color: #15151a;
+    border-color: #c6c6cd;
+  }
+
+  @media (max-width: 720px) {
+    .brand__org {
+      display: none;
+    }
+
+    .site-nav {
+      order: 3;
+      width: 100%;
+      border-top: 1px solid var(--line-faint);
+      padding-top: 0.5rem;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      scrollbar-width: none;
+    }
+
+    .site-nav::-webkit-scrollbar {
+      display: none;
+    }
+  }
+</style>

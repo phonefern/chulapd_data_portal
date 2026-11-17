@@ -1,0 +1,99 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import summary from '../../../../data/summary-v2.0.json';
+import latest from '../../../../data/summary.json';
+import { dataset, currentDataset, portal } from '../../../../data/dataset';
+
+const n = (value: number) => value.toLocaleString('en-US');
+const changes = summary.release.changes_since_v1.map((change) =>
+  change.startsWith('Expanded cohort to ')
+    ? `Expanded cohort to ${n(summary.cohort.total)} participants`
+    : change
+);
+
+const rules = [
+  'Old versions are never overwritten or removed.',
+  'Each release has a fixed file structure, frozen at publication.',
+  'Each release has release notes.',
+  'Publications must state the version used.',
+  'Downloads are logged against the version downloaded.',
+  'Each major version receives its own DOI; minor updates share it with version notes.',
+  'Changes between versions are documented here.',
+];
+---
+
+<Base title={`Version history - CheckPD - ${portal.name}`} description="Version history and stability commitments for CheckPD dataset releases.">
+  <nav class="wrap crumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a><span aria-hidden="true">/</span><a href="/datasets/">Datasets</a><span aria-hidden="true">/</span><span aria-current="page">Version history</span>
+  </nav>
+
+  <header class="wrap page-head">
+    <p class="eyebrow">CheckPD dataset series</p>
+    <h1>Version history</h1>
+    <p class="lede prose">A stable record of release changes, permanent URLs and the versioning rules applied to CheckPD.</p>
+  </header>
+
+  <section class="section section--first"><div class="wrap stack">
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th scope="col">Version</th><th scope="col">Release date</th><th scope="col">Status</th><th scope="col">DOI</th><th scope="col">Main changes</th></tr></thead>
+        <tbody>
+          <tr>
+            <th scope="row"><a href={currentDataset.path}>{currentDataset.version}</a></th>
+            <td>Pending</td><td><span class="badge badge--brand">In preparation</span></td><td>Pending</td>
+            <td class="changes"><ul>
+              <li>{n(latest.cohort.total)} participants in the validated release</li>
+              <li>Processed voice with short connected-speech padding and recorded QC decisions</li>
+              <li>Three-axis motor features retained with incomplete-data flags</li>
+            </ul></td>
+          </tr>
+          <tr>
+            <th scope="row"><a href={dataset.path}>{dataset.version}</a></th>
+            <td>Pending</td><td><span class="badge badge--brand">In preparation</span></td><td>Pending</td>
+            <td class="changes"><ul>{changes.map((change) => <li>{change}</li>)}</ul></td>
+          </tr>
+          <tr><th scope="row">1.0</th><td>Unknown</td><td><span class="badge">Superseded</span></td><td>None</td><td>Initial release</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">The v1.0 release date is not recorded in the repository. Its landing page has not yet been created, so no inactive link is shown.</p>
+  </div></section>
+
+  <section class="section"><div class="wrap rules-layout">
+    <div class="stack">
+      <div><p class="eyebrow">Commitments</p><h2>Versioning rules</h2></div>
+      <ul class="rule-list">{rules.map((rule) => <li>{rule}</li>)}</ul>
+    </div>
+    <aside class="card version-note">
+      <p class="eyebrow">What changes the number?</p>
+      <h2>Major and minor releases</h2>
+      <p><strong>Major version:</strong> cohort or file-structure changes that affect how researchers interpret or process the release.</p>
+      <p><strong>Minor version:</strong> metadata corrections that do not change the frozen file structure.</p>
+    </aside>
+  </div></section>
+
+  <section class="section"><div class="wrap stack">
+    <div><p class="eyebrow">Permanent locations</p><h2>One URL for every version</h2></div>
+    <p class="prose">Each version keeps its own permanent URL. The v2.0 address remains the DOI resolution target. The latest v2.1 record is in preparation.</p>
+    <pre class="url-scheme" aria-label="CheckPD version URL pattern"><code>/datasets/checkpd/v1.0/
+/datasets/checkpd/v2.0/      preserved
+/datasets/checkpd/v2.1/      &larr; latest, in preparation</code></pre>
+    <p><a class="btn btn--primary" href={currentDataset.path}>Open the latest {currentDataset.shortTitle} record</a></p>
+  </div></section>
+</Base>
+
+<style>
+  .changes { min-width: 25rem; white-space: normal; }
+  .changes ul { margin: 0; padding-left: 1.15rem; }
+  .changes li + li { margin-top: 0.25rem; }
+  .rules-layout { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(17rem, 0.7fr); gap: var(--space-5); align-items: start; }
+  .rule-list { margin: 0; padding: 0; list-style: none; border-block: 1px solid var(--line); }
+  .rule-list li { padding: 0.7rem 0 0.7rem 1.4rem; border-bottom: 1px solid var(--line-faint); color: var(--ink-secondary); position: relative; }
+  .rule-list li:last-child { border-bottom: 0; }
+  .rule-list li::before { content: '\2713'; position: absolute; left: 0; color: var(--brand); font-weight: 700; }
+  .version-note { border-top: 3px solid var(--brand); box-shadow: none; }
+  .version-note h2 { margin-top: var(--space-1); }
+  .version-note p:not(.eyebrow) { margin-top: var(--space-3); color: var(--ink-secondary); }
+  .url-scheme { width: min(100%, 42rem); overflow-x: auto; margin: 0; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface-sunken); color: var(--ink-primary); }
+  @media (max-width: 760px) { .rules-layout { grid-template-columns: 1fr; } }
+</style>

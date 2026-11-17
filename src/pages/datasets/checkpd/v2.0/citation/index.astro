@@ -1,0 +1,127 @@
+---
+import Base from '../../../../../layouts/Base.astro';
+import CitationBlock from '../../../../../components/CitationBlock.astro';
+import DatasetNav from '../../../../../components/DatasetNav.astro';
+import { citations, dataset, portal } from '../../../../../data/dataset';
+
+const activeDoi = dataset.doi.datacite ?? dataset.doi.zenodo;
+const citation = citations(activeDoi);
+const pending = (value: string | null) => value ?? 'Pending';
+const authorsPending = dataset.authors.some((author) => author.startsWith('TODO'));
+---
+
+<Base title={`Citation - ${dataset.shortTitle} - ${portal.name}`} description={`Version-specific citation guidance for ${dataset.shortTitle}.`}>
+  <nav class="wrap crumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a><span aria-hidden="true">/</span><a href="/datasets/">Datasets</a><span aria-hidden="true">/</span>
+    <a href={dataset.path}>{dataset.shortTitle}</a><span aria-hidden="true">/</span><span aria-current="page">Citation</span>
+  </nav>
+
+  <header class="wrap page-head">
+    <p class="head-badges"><span class="badge badge--brand">Cite version {dataset.version}</span><span class="badge">DOI {pending(activeDoi)}</span></p>
+    <h1>Cite {dataset.shortTitle}</h1>
+    <p class="lede prose">Cite the versioned dataset and its dataset paper together. The portal landing page is the permanent location, not a substitute for the dataset citation.</p>
+  </header>
+
+  <DatasetNav />
+
+  <section class="section section--first"><div class="wrap citation-layout">
+    <div class="stack citation-formats">
+      <div><p class="eyebrow">Ready to copy</p><h2>Citation formats</h2></div>
+      {(activeDoi === null || authorsPending) && <p class="note note--warn"><strong>Citation metadata Pending.</strong> DOI, publication year and author list have not been finalised. The generated text below deliberately preserves visible placeholders and will update from <code>dataset.ts</code> when those fields are approved.</p>}
+      <CitationBlock id="citation-vancouver" label="Vancouver" value={citation.vancouver} />
+      <CitationBlock id="citation-apa" label="APA" value={citation.apa} />
+      <CitationBlock id="citation-bibtex" label="BibTeX" value={citation.bibtex} />
+    </div>
+
+    <aside class="record-meta">
+      <p class="eyebrow">Record metadata</p>
+      <dl>
+        <div><dt>Version</dt><dd>{dataset.version}</dd></div>
+        <div><dt>Authors</dt><dd>{authorsPending ? <span class="pending">Pending</span> : dataset.authors.join(', ')}</dd></div>
+        <div><dt>Primary DOI</dt><dd>{pending(activeDoi)}</dd></div>
+        <div><dt>Zenodo DOI</dt><dd>{pending(dataset.doi.zenodo)}</dd></div>
+        <div><dt>DataCite DOI</dt><dd>{pending(dataset.doi.datacite)}</dd></div>
+        <div><dt>Canonical page</dt><dd><a href={dataset.path}>{dataset.path}</a></dd></div>
+      </dl>
+    </aside>
+  </div></section>
+
+  <section class="section"><div class="wrap stack">
+    <div><p class="eyebrow">Citation model</p><h2>What each record means</h2></div>
+    <div class="record-flow" aria-label="Relationship between the documentation DOI, dataset DOI and canonical landing page">
+      <article class="record-card">
+        <p class="eyebrow">Short term</p>
+        <h3>Zenodo documentation record</h3>
+        <p><strong>{dataset.doi.zenodoRecordTitle}</strong></p>
+        <p class="record-card__doi">DOI: {pending(dataset.doi.zenodo)}</p>
+        <p class="note note--warn"><strong>Documentation only.</strong> The Zenodo record contains no participant data. Full research files remain under credentialed access on the institutional portal.</p>
+      </article>
+
+      <div class="flow-target" aria-hidden="true"><span>resolves to</span><strong>{dataset.path}</strong></div>
+
+      <article class="record-card">
+        <p class="eyebrow">Long term</p>
+        <h3>Institutional DataCite DOI</h3>
+        <p>The institutional DOI identifies this dataset version and resolves to the same permanent landing page.</p>
+        <p class="record-card__doi">DOI: {pending(dataset.doi.datacite)}</p>
+      </article>
+    </div>
+    <p class="note note--info"><strong>Why one destination?</strong> Both DOI routes resolve to the frozen {dataset.shortTitle} landing page. Moving from the Zenodo bridge to the institutional DataCite DOI therefore does not break the canonical location already used by readers.</p>
+  </div></section>
+
+  <section class="section"><div class="wrap contents-layout">
+    <div class="stack">
+      <div><p class="eyebrow">Zenodo scope</p><h2>Documentation record contents</h2></div>
+      <ul class="file-list">{dataset.doi.zenodoContents.map((file) => <li><code>{file}</code></li>)}</ul>
+    </div>
+    <aside class="stack">
+      <div><p class="eyebrow">Dataset paper</p><h2>Cite alongside the dataset</h2></div>
+      <p>The dataset paper provides scientific context and should be cited together with the versioned dataset DOI, not instead of it.</p>
+      <p class="note"><strong>Dataset paper:</strong> Pending publication.</p>
+    </aside>
+  </div></section>
+
+  <section class="section"><div class="wrap closing-grid">
+    <div class="stack">
+      <div><p class="eyebrow">Version discipline</p><h2>Always state the version used</h2></div>
+      <p>Each major release receives its own DOI. Minor updates share that DOI with documented version notes. Older releases are never overwritten.</p>
+      <p><a href="/datasets/checkpd/versions/">View the version history</a></p>
+    </div>
+    <aside class="acknowledgement">
+      <p class="eyebrow">Acknowledgement</p>
+      <h2>Exact wording Pending</h2>
+      <p>The final acknowledgement will name the Parkinson&rsquo;s Disease Center of Excellence and the Thai Red Cross Society. Institutional wording is awaiting approval and is not drafted here.</p>
+    </aside>
+  </div></section>
+</Base>
+
+<style>
+  .head-badges { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+  .citation-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(17rem, 0.62fr); gap: var(--space-5); align-items: start; }
+  .citation-formats { min-width: 0; }
+  .record-meta { position: sticky; top: 6rem; border: 1px solid var(--line); border-top: 3px solid var(--brand); border-radius: var(--radius-lg); background: var(--surface-card); overflow: hidden; box-shadow: var(--shadow); }
+  .record-meta > .eyebrow { padding: var(--space-4) var(--space-4) var(--space-2); }
+  .record-meta dl { margin: 0; }
+  .record-meta dl div { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: var(--space-2); padding: 0.7rem var(--space-4); border-top: 1px solid var(--line-faint); }
+  .record-meta dt { color: var(--ink-muted); font-size: 0.84rem; }
+  .record-meta dd { margin: 0; overflow-wrap: anywhere; font-size: 0.88rem; }
+  .pending { color: var(--status-warn); font-weight: 650; }
+  .record-flow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(9rem, 0.35fr) minmax(0, 1fr); gap: var(--space-3); align-items: stretch; }
+  .record-card { padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface-card); }
+  .record-card h3 { margin-top: var(--space-1); }
+  .record-card > p:not(.eyebrow, .note) { margin-top: var(--space-3); color: var(--ink-secondary); }
+  .record-card__doi { font-family: var(--font-mono); font-size: 0.82rem; }
+  .record-card .note { margin-top: var(--space-3); }
+  .flow-target { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: var(--space-3); color: var(--ink-muted); font-size: 0.8rem; }
+  .flow-target::before, .flow-target::after { content: ''; width: 100%; border-top: 1px solid var(--line-strong); margin-block: var(--space-2); }
+  .flow-target strong { color: var(--brand); overflow-wrap: anywhere; }
+  .contents-layout, .closing-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); align-items: start; }
+  .file-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius-lg); list-style: none; overflow: hidden; }
+  .file-list li { padding: 0.7rem 0.85rem; border-bottom: 1px solid var(--line-faint); overflow-wrap: anywhere; }
+  .file-list li:nth-child(odd) { border-right: 1px solid var(--line-faint); }
+  .acknowledgement { padding: var(--space-4); border-left: 3px solid var(--brand); background: var(--surface-sunken); }
+  .acknowledgement h2 { margin-top: var(--space-1); }
+  .acknowledgement p:last-child { margin-top: var(--space-3); color: var(--ink-secondary); }
+  @media (max-width: 850px) { .citation-layout, .record-flow, .contents-layout, .closing-grid { grid-template-columns: 1fr; } .record-meta { position: static; grid-row: 1; } .flow-target { flex-direction: row; gap: var(--space-2); } .flow-target::before, .flow-target::after { margin: 0; } }
+  @media (max-width: 560px) { .file-list { grid-template-columns: 1fr; } .file-list li:nth-child(odd) { border-right: 0; } }
+</style>

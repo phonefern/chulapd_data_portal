@@ -1,0 +1,245 @@
+---
+import verified from '../data/summary-v2.1-verified.json';
+import manifest from '../data/summary-v2.1.json';
+
+/**
+ * CheckPD v2.1 modality coverage — verified against released files.
+ *
+ * Every bar counts released files. The original selected-cohort manifest supplies
+ * the upstream comparison; completed voice preprocessing uses measured counts.
+ */
+
+const total = verified.cohort.total;
+const groups = verified.cohort.groups;
+const denominator = Object.fromEntries(groups.map((g) => [g.label, g.count]));
+const claimed = Object.fromEntries(manifest.modalities.map((m: any) => [m.flag, m.total]));
+
+const rows = verified.modalities
+  .filter((m) => m.flag !== 'voice_available')
+  .map((m) => {
+    const pending = m.flag.startsWith('voice') && !verified.known_gaps.voice_preprocessing_complete &&
+      m.total === 0 && (claimed[m.flag] ?? 0) > 0;
+    return {
+      ...m,
+      pending,
+      pct: (m.total / total) * 100,
+      claimed: claimed[m.flag] ?? null,
+      series: m.by_group.map((e) => ({
+        label: e.label,
+        count: e.count,
+        pct: (e.count / denominator[e.label]) * 100,
+      })),
+    };
+  });
+
+const n = (v: number) => v.toLocaleString('en-US');
+const pct = (v: number) => `${v.toFixed(1)}%`;
+const pendingRows = rows.filter((r) => r.pending);
+---
+
+<figure class="chart">
+  <figcaption class="chart__head">
+    <h3 class="chart__title">Modality coverage</h3>
+    <p class="chart__sub">
+      Participants with a released file for each task, out of {n(total)}. Counted from the
+      files themselves, not from what the acquisition backend reported.
+    </p>
+  </figcaption>
+
+  <div class="chart__legend" role="list">
+    {groups.map((g) => (
+      <span class="legend" role="listitem">
+        <span class="legend__swatch" data-group={g.label} aria-hidden="true"></span>
+        {g.label} <span class="legend__n">n&nbsp;=&nbsp;{n(g.count)}</span>
+      </span>
+    ))}
+  </div>
+
+  <div class="chart__plot">
+    {rows.map((row) => (
+      <div class="row" data-pending={row.pending ? '' : undefined}>
+        <div class="row__label">{row.label}</div>
+        <div class="row__bars">
+          {row.pending ? (
+            <p class="pending">
+              Not yet processed &mdash; {n(row.claimed!)} recordings exist upstream
+            </p>
+          ) : (
+            row.series.map((s) => (
+              <div class="bar" data-group={s.label}>
+                <span class="bar__track">
+                  <span class="bar__fill" style={`--w:${s.pct.toFixed(2)}%`}></span>
+                </span>
+                <span class="bar__value">
+                  <span class="bar__pct">{pct(s.pct)}</span>
+                  <span class="bar__count">{n(s.count)}</span>
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <details class="chart__table">
+    <summary>View as table</summary>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Modality</th>
+            <th scope="col" class="num">PD</th>
+            <th scope="col" class="num">HC</th>
+            <th scope="col" class="num">Released</th>
+            <th scope="col" class="num">Recorded upstream</th>
+            <th scope="col" class="num">Files</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr>
+              <th scope="row">{row.label}</th>
+              {row.series.map((s) => <td class="num">{row.pending ? '—' : n(s.count)}</td>)}
+              <td class="num">{row.pending ? 'pending' : n(row.total)}</td>
+              <td class="num">{row.claimed != null ? n(row.claimed) : '—'}</td>
+              <td class="num">{row.files_on_disk != null ? n(row.files_on_disk) : '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  {pendingRows.length > 0 && (
+    <p class="note note--warn chart__foot">
+      <strong>Voice is not in this release yet.</strong> The recordings exist, but the
+      segmentation step that turns a raw clip into an analysis-ready file has not been run for
+      this cohort. Until it has, voice counts would be a measure of pipeline progress rather
+      than of the dataset.
+    </p>
+  )}
+</figure>
+
+<style>
+  .chart { margin: 0; }
+  .chart__head { margin-bottom: var(--space-2); }
+  .chart__title { margin: 0; }
+
+  .chart__sub {
+    margin: 0.3rem 0 0;
+    font-size: 0.86rem;
+    color: var(--ink-secondary);
+    max-width: 62ch;
+  }
+
+  .chart__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.1rem;
+    margin-block: var(--space-3) var(--space-2);
+    font-size: 0.82rem;
+    color: var(--ink-secondary);
+  }
+
+  .legend { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 550; }
+
+  .legend__n {
+    font-weight: 400;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .legend__swatch { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+  .legend__swatch[data-group='PD'] { background: var(--series-pd); }
+  .legend__swatch[data-group='HC'] { background: var(--series-hc); }
+
+  .chart__plot { display: grid; gap: 0.6rem; }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(9rem, 15rem) 1fr;
+    gap: 0.35rem 1rem;
+    align-items: start;
+  }
+
+  .row__label {
+    font-size: 0.86rem;
+    color: var(--ink-primary);
+    padding-top: 0.05rem;
+  }
+
+  .row[data-pending] .row__label { color: var(--ink-muted); }
+
+  .row__bars { display: grid; gap: 2px; }
+
+  .pending {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    font-style: italic;
+    padding-block: 0.1rem;
+  }
+
+  .bar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .bar__track {
+    display: block;
+    height: 9px;
+    border-radius: 2px;
+    background: var(--series-track);
+    overflow: hidden;
+  }
+
+  .bar__fill {
+    display: block;
+    height: 100%;
+    width: var(--w);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .bar[data-group='PD'] .bar__fill { background: var(--series-pd); }
+  .bar[data-group='HC'] .bar__fill { background: var(--series-hc); }
+
+  .bar__value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: 0.76rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .bar__pct {
+    min-width: 3.4rem;
+    text-align: right;
+    color: var(--ink-primary);
+    font-weight: 550;
+  }
+
+  .bar__count { min-width: 2.8rem; text-align: right; color: var(--ink-muted); }
+
+  .chart__table { margin-top: var(--space-4); }
+
+  .chart__table summary {
+    cursor: pointer;
+    font-size: 0.84rem;
+    color: var(--ink-secondary);
+    width: fit-content;
+  }
+
+  .chart__table summary:hover { color: var(--brand); }
+  .chart__table .table-scroll { margin-top: var(--space-2); }
+  .chart__foot { margin-top: var(--space-4); }
+
+  @media (max-width: 620px) {
+    .row { grid-template-columns: 1fr; gap: 0.25rem; }
+    .bar__pct { min-width: 3rem; }
+    .bar__count { min-width: 2.4rem; }
+  }
+</style>

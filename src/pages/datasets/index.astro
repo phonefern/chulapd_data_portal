@@ -1,0 +1,108 @@
+---
+import Base from '../../layouts/Base.astro';
+import StatTiles from '../../components/StatTiles.astro';
+import summary from '../../data/summary.json';
+import { currentDataset as dataset, portal } from '../../data/dataset';
+
+const n = (value: number) => value.toLocaleString('en-US');
+const gb = (summary.release.total_bytes / 1024 ** 3).toFixed(2);
+const groups = Object.fromEntries(summary.cohort.groups.map((group) => [group.label, group.count]));
+const modalityCount = summary.modalities.filter((modality) => modality.flag !== 'voice_available').length;
+
+const tiles = [
+  { value: n(summary.cohort.total), label: 'Participants' },
+  { value: n(groups.PD), label: "Parkinson's disease", accent: 'pd' as const },
+  { value: n(groups.HC), label: 'Healthy controls', accent: 'hc' as const },
+  { value: String(modalityCount), label: 'Modalities' },
+  { value: n(summary.release.total_files), label: 'Files', note: `${gb} GB` },
+];
+---
+
+<Base
+  title={`Datasets - ${portal.name}`}
+  description="Versioned research datasets published by the CheckPD Data Portal."
+>
+  <header class="wrap page-head">
+    <p class="eyebrow">Datasets</p>
+    <h1>Datasets</h1>
+    <p class="lede prose">
+      Releases are versioned, frozen and citable. Each release keeps a permanent record so that
+      earlier versions remain available for reproducible research.
+    </p>
+  </header>
+
+  <section class="section section--first">
+    <div class="wrap stack">
+      <div>
+        <p class="eyebrow">Latest dataset · In preparation</p>
+        <h2><a href={dataset.path}>{dataset.title}</a></h2>
+      </div>
+
+      <p class="badges">
+        <span class="badge badge--brand">{dataset.accessLevel} access</span>
+        <span class="badge">Version {dataset.version}</span>
+        {dataset.status === 'in-preparation' && <span class="badge">In preparation</span>}
+      </p>
+
+      <StatTiles tiles={tiles} />
+      <p class="prose">{dataset.tagline}</p>
+      <p><a class="btn btn--primary" href={dataset.path}>View dataset</a></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div>
+        <p class="eyebrow">Version archive</p>
+        <h2>Earlier CheckPD releases</h2>
+      </div>
+      <article class="release-row">
+        <div><h3><a href="/datasets/checkpd/v2.0/">CheckPD v2.0</a></h3>
+          <p>Earlier version with its own preserved statistics, documentation and citation target.</p></div>
+        <span class="badge">Version 2.0</span>
+      </article>
+      <article class="release-row">
+        <div>
+          <h3>CheckPD v1.0</h3>
+          <p>Superseded by v2.0 and retained for reproducibility. A dedicated landing page is not yet available.</p>
+        </div>
+        <span class="badge">Superseded</span>
+      </article>
+      <p><a href="/datasets/checkpd/versions/">See version history</a></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div>
+        <p class="eyebrow">Forthcoming</p>
+        <h2>Planned dataset series</h2>
+      </div>
+      <p class="prose">
+        CheckBrain, CheckSleep and longitudinal CheckPD follow-up datasets are planned future work.
+        They are not currently available.
+      </p>
+      <p class="note note--info">
+        <strong>Versioning policy.</strong> Releases are frozen and never overwritten. Each major
+        version receives its own DOI, and publications must state the version used.
+        <a href="/datasets/checkpd/versions/">Read the version history</a>.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .badges { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; }
+  .release-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface-card);
+  }
+  .release-row p { margin: 0.25rem 0 0; color: var(--ink-secondary); }
+  @media (max-width: 520px) { .release-row { flex-direction: column; } }
+</style>

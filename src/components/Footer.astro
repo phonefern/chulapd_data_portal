@@ -1,0 +1,152 @@
+---
+import trcLogo from '../content/img/thai-red-cross.png';
+import summary from '../data/summary.json';
+import { portal } from '../data/dataset';
+import { UI, langOf, type Lang } from '../data/i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const lang: Lang = Astro.props.lang ?? langOf(Astro.url.pathname);
+const t = UI[lang];
+const generated = summary.generated_at.replace('T', ' ').replace('Z', ' UTC');
+
+const org = lang === 'th' ? 'ศูนย์ความเป็นเลิศทางการแพทย์โรคพาร์กินสันและกลุ่มโรคความเคลื่อนไหวผิดปกติ' : portal.operator;
+const institution = lang === 'th' ? 'โรงพยาบาลจุฬาลงกรณ์ สภากาชาดไทย' : portal.institution;
+---
+
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <div class="site-footer__identity">
+      <!-- The emblem is protected and must appear red-on-white without
+           recolouring, so it keeps its own white plate in both themes. -->
+      <span class="site-footer__plate">
+        <img
+          src={trcLogo.src}
+          width="104"
+          height="104"
+          alt="Thai Red Cross Society"
+        />
+      </span>
+      <div>
+        <p class="site-footer__org">{org}</p>
+        <p class="site-footer__sub">{institution}</p>
+      </div>
+    </div>
+
+    <nav class="site-footer__links" aria-label={t.footerNav}>
+      {t.footerLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+    </nav>
+
+    <div class="site-footer__meta">
+      <p>{t.generatedNote}</p>
+      <p>{t.lastBuild} {generated}.</p>
+      <p lang={lang === 'th' ? 'th' : 'en'}>{t.partialNotice}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-6);
+    border-top: 1px solid var(--line);
+    background: var(--surface-sunken);
+  }
+
+  .site-footer__inner {
+    display: grid;
+    gap: var(--space-5);
+    padding-block: var(--space-5);
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    align-items: start;
+  }
+
+  .site-footer p {
+    margin: 0;
+  }
+
+  .site-footer__identity {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .site-footer__plate {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 120px;
+    height: 120px;
+    padding: 8px;
+    border-radius: var(--radius-lg);
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  .site-footer__plate img {
+    display: block;
+    width: 104px;
+    height: 104px;
+  }
+
+  .site-footer__identity > div {
+    min-width: 0;
+  }
+
+  .site-footer__org {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+    font-size: 0.9rem;
+    text-wrap: balance;
+  }
+
+  .site-footer__sub {
+    font-size: 0.8rem;
+    overflow-wrap: anywhere;
+    color: var(--ink-muted);
+    margin-top: 0.2rem;
+  }
+
+  .site-footer__links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+  }
+
+  .site-footer__links a {
+    color: var(--ink-secondary);
+    text-decoration: none;
+    width: fit-content;
+  }
+
+  .site-footer__links a:hover {
+    color: var(--brand);
+    text-decoration: underline;
+  }
+
+  /* The lockup is fixed-width and sits beside wrapping text, so it steps down
+     on narrow screens rather than squeezing the organisation name. */
+  @media (max-width: 520px) {
+    .site-footer__plate {
+      width: 92px;
+      height: 92px;
+      padding: 6px;
+    }
+
+    .site-footer__plate img {
+      width: 80px;
+      height: 80px;
+    }
+  }
+
+  .site-footer__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+  }
+</style>

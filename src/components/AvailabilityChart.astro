@@ -1,0 +1,300 @@
+---
+import summary from '../data/summary-v2.0.json';
+
+/**
+ * Modality availability, PD vs HC.
+ *
+ * Bars encode the SHARE of each group, not the raw count: the two groups have
+ * very different denominators (PD 447, HC 935), so raw-count bars would read as
+ * "controls did more of everything" when the opposite is often true. Raw counts
+ * stay on the bar as a direct label and in the table view.
+ */
+
+const groups = summary.cohort.groups;
+const denominator = Object.fromEntries(groups.map((g) => [g.label, g.count]));
+
+const rows = summary.modalities.map((modality) => ({
+  ...modality,
+  series: modality.by_group.map((entry) => ({
+    label: entry.label,
+    count: entry.count,
+    pct: (entry.count / denominator[entry.label]) * 100,
+  })),
+}));
+
+const pct = (value: number) => `${value.toFixed(1)}%`;
+const n = (value: number) => value.toLocaleString('en-US');
+---
+
+<figure class="chart">
+  <figcaption class="chart__head">
+    <h3 class="chart__title">Modality availability by diagnostic group</h3>
+    <p class="chart__sub">
+      Share of each group with at least one usable recording. Bars are within-group
+      percentages; raw counts are shown at the end of each bar.
+    </p>
+  </figcaption>
+
+  <div class="chart__legend" role="list">
+    {groups.map((group) => (
+      <span class="legend" role="listitem">
+        <span class="legend__swatch" data-group={group.label} aria-hidden="true"></span>
+        {group.label} <span class="legend__n">n&nbsp;=&nbsp;{n(group.count)}</span>
+      </span>
+    ))}
+  </div>
+
+  <div class="chart__plot">
+    {rows.map((row) => (
+      <div class="row">
+        <div class="row__label">
+          {row.label}
+          {row.derived && (
+            <span class="row__flag" title={row.derived}>derived</span>
+          )}
+        </div>
+        <div class="row__bars">
+          {row.series.map((series) => (
+            <div
+              class="bar"
+              data-group={series.label}
+              title={`${row.label} — ${series.label}: ${n(series.count)} of ${n(denominator[series.label])} (${pct(series.pct)})`}
+            >
+              <span class="bar__track">
+                <span class="bar__fill" style={`--w:${series.pct.toFixed(2)}%`}></span>
+              </span>
+              <span class="bar__value">
+                <span class="bar__pct">{pct(series.pct)}</span>
+                <span class="bar__count">{n(series.count)}</span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <details class="chart__table">
+    <summary>View as table</summary>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Modality</th>
+            <th scope="col" class="num">PD</th>
+            <th scope="col" class="num">PD %</th>
+            <th scope="col" class="num">HC</th>
+            <th scope="col" class="num">HC %</th>
+            <th scope="col" class="num">Total</th>
+            <th scope="col" class="num">Files</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr>
+              <th scope="row">{row.label}</th>
+              {row.series.map((series) => (
+                <>
+                  <td class="num">{n(series.count)}</td>
+                  <td class="num">{pct(series.pct)}</td>
+                </>
+              ))}
+              <td class="num">{n(row.total)}</td>
+              <td class="num">{row.files_on_disk === null ? '—' : n(row.files_on_disk)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </details>
+</figure>
+
+<style>
+  .chart {
+    margin: 0;
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface-card);
+    box-shadow: var(--shadow);
+  }
+
+  .chart__head {
+    margin-bottom: 0.9rem;
+  }
+
+  .chart__title {
+    margin: 0;
+  }
+
+  .chart__sub {
+    margin: 0.3rem 0 0;
+    font-size: 0.86rem;
+    color: var(--ink-secondary);
+    max-width: 62ch;
+  }
+
+  .chart__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.1rem;
+    margin-bottom: 1rem;
+    font-size: 0.82rem;
+    color: var(--ink-secondary);
+  }
+
+  .legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 550;
+  }
+
+  .legend__n {
+    font-weight: 400;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .legend__swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex: none;
+  }
+
+  [data-group='PD'] .legend__swatch,
+  .legend__swatch[data-group='PD'] {
+    background: var(--series-pd);
+  }
+
+  [data-group='HC'] .legend__swatch,
+  .legend__swatch[data-group='HC'] {
+    background: var(--series-hc);
+  }
+
+  .chart__plot {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(9rem, 15rem) 1fr;
+    gap: 0.35rem 1rem;
+    align-items: start;
+  }
+
+  .row__label {
+    font-size: 0.86rem;
+    font-weight: 500;
+    color: var(--ink-primary);
+    padding-top: 0.05rem;
+  }
+
+  .row__flag {
+    display: inline-block;
+    margin-left: 0.35rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    padding: 0 0.25rem;
+    cursor: help;
+  }
+
+  /* 2px between the two group bars keeps the surface visible between fills. */
+  .row__bars {
+    display: grid;
+    gap: 2px;
+  }
+
+  .bar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .bar__track {
+    display: block;
+    height: 9px;
+    border-radius: 2px;
+    background: var(--series-track);
+    overflow: hidden;
+  }
+
+  .bar__fill {
+    display: block;
+    height: 100%;
+    width: var(--w);
+    /* Rounded only at the data end; the baseline end stays square. */
+    border-radius: 0 4px 4px 0;
+  }
+
+  .bar[data-group='PD'] .bar__fill {
+    background: var(--series-pd);
+  }
+
+  .bar[data-group='HC'] .bar__fill {
+    background: var(--series-hc);
+  }
+
+  .bar__value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: 0.76rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .bar__pct {
+    min-width: 3.4rem;
+    text-align: right;
+    color: var(--ink-primary);
+    font-weight: 550;
+  }
+
+  .bar__count {
+    min-width: 2.8rem;
+    text-align: right;
+    color: var(--ink-muted);
+  }
+
+  .chart__table {
+    margin-top: 1.4rem;
+  }
+
+  .chart__table summary {
+    cursor: pointer;
+    font-size: 0.84rem;
+    color: var(--ink-secondary);
+    width: fit-content;
+  }
+
+  .chart__table summary:hover {
+    color: var(--brand);
+  }
+
+  .chart__table .table-scroll {
+    margin-top: 0.7rem;
+  }
+
+  @media (max-width: 620px) {
+    .row {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+
+    .bar__pct {
+      min-width: 3rem;
+    }
+
+    .bar__count {
+      min-width: 2.4rem;
+    }
+  }
+</style>

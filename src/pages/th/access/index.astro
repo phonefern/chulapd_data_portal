@@ -1,0 +1,182 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { dataset } from '../../../data/dataset';
+
+const levels = [
+  {
+    level: 'ระดับ 1',
+    name: 'ข้อมูลสาธารณะ',
+    unlocks: 'คำอธิบายชุดข้อมูล สรุปกลุ่มประชากรและความครอบคลุม เอกสารประกอบ พจนานุกรมข้อมูล และวิธีอ้างอิง',
+    requirement: 'ไม่ต้องลงทะเบียน',
+  },
+  {
+    level: 'ระดับ 2',
+    name: 'ผู้ลงทะเบียน',
+    unlocks: 'ไฟล์ตัวอย่าง ชุดข้อมูลตัวอย่างขนาดเล็ก และตัวอย่างโค้ด',
+    requirement: 'ลงทะเบียนบัญชีผู้ใช้',
+  },
+  {
+    level: 'ระดับ 3',
+    name: 'ผู้ได้รับอนุมัติ',
+    unlocks: 'ชุดข้อมูลฉบับเต็ม ไฟล์สัญญาณทุกรูปแบบ คะแนนทางคลินิก และตารางข้อมูลกำกับทั้งหมด',
+    requirement: 'คำขอได้รับอนุมัติ และลงนามข้อตกลงการใช้ข้อมูล',
+  },
+];
+
+const workflow = [
+  'ยื่นคำขอพร้อมระบุชื่อ สถาบันต้นสังกัด อีเมลของสถาบัน และวัตถุประสงค์การวิจัย',
+  'ผู้ดูแลข้อมูลตรวจสอบคำขอ',
+  'ลงนามข้อตกลงการใช้ข้อมูล',
+  'ผู้ได้รับอนุมัติจะได้รับลิงก์ดาวน์โหลดที่มีกำหนดหมดอายุ',
+  'บันทึกการเข้าถึงไว้ตามเวอร์ชันของชุดข้อมูลที่ดาวน์โหลด',
+];
+
+const terms = [
+  'ใช้ข้อมูลเพื่อวัตถุประสงค์การวิจัยที่ได้รับอนุมัติเท่านั้น',
+  'ไม่พยายามระบุตัวตนผู้เข้าร่วมวิจัย',
+  'ไม่เผยแพร่หรือส่งต่อชุดข้อมูลให้ผู้อื่น',
+  'ไม่นำไปเชื่อมโยงกับข้อมูลภายนอกเพื่อระบุตัวตน',
+  'แจ้งเหตุด้านความปลอดภัยของข้อมูลเมื่อเกิดขึ้น',
+  'อ้างอิงชุดข้อมูลและบทความที่เกี่ยวข้อง พร้อมระบุเวอร์ชันที่ใช้',
+  'ระบุกิตติกรรมประกาศถึงศูนย์ความเป็นเลิศฯ และสภากาชาดไทย',
+  'ปฏิบัติตามข้อกำหนดทางจริยธรรมและกฎหมายที่เกี่ยวข้อง',
+];
+---
+
+<Base
+  lang="th"
+  title="การขอใช้ข้อมูล — CheckPD Data Portal"
+  description="ระดับการเข้าถึง ขั้นตอนการอนุมัติ และเงื่อนไขการใช้ข้อมูลของ CheckPD Data Portal"
+>
+  <header class="wrap page-head">
+    <p class="eyebrow">นโยบายการเข้าถึงข้อมูล</p>
+    <h1>การขอใช้ชุดข้อมูล CheckPD</h1>
+    <p class="lede prose">
+      ชุดข้อมูลเผยแพร่แบบควบคุมการเข้าถึง ไม่ใช่การเปิดดาวน์โหลดสาธารณะ
+      หน้านี้สรุปว่าแต่ละระดับเปิดให้เข้าถึงอะไร และคำขอจะผ่านขั้นตอนใดบ้าง
+    </p>
+  </header>
+
+  <section class="section section--first">
+    <div class="wrap stack">
+      <h2>สามระดับของการเข้าถึง</h2>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">ระดับ</th>
+              <th scope="col">ชื่อ</th>
+              <th scope="col">เข้าถึงอะไรได้</th>
+              <th scope="col">เงื่อนไข</th>
+            </tr>
+          </thead>
+          <tbody>
+            {levels.map((row) => (
+              <tr>
+                <th scope="row">{row.level}</th>
+                <td class="wrap-cell">{row.name}</td>
+                <td class="wrap-cell">{row.unlocks}</td>
+                <td class="wrap-cell">{row.requirement}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p class="prose">
+        เหตุผลที่ไม่เปิดดาวน์โหลดสาธารณะ คือชุดข้อมูลมีแบบสอบถามที่เกี่ยวข้องกับสุขภาพ คะแนนทางคลินิก
+        และข้อมูลจากเซ็นเซอร์ ส่วนสิ่งที่<strong>ไม่มี</strong>ในชุดข้อมูล ได้แก่
+        ข้อมูลระบุตัวตนโดยตรง รหัสอ้างอิงภายในระบบ เวลาแบบสัมบูรณ์ และตารางเชื่อมโยงรหัสผู้เข้าร่วม
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <h2>ขั้นตอนการอนุมัติ</h2>
+      <ol class="workflow">
+        {workflow.map((step) => <li>{step}</li>)}
+      </ol>
+      <p class="note">
+        ยังไม่มีการกำหนดระยะเวลาพิจารณา และยังไม่มีการมอบหมายผู้ดูแลข้อมูลอย่างเป็นทางการ
+        ทั้งสองรายการอยู่ระหว่างการตัดสินใจของสถาบัน
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <h2 id="dua">ข้อตกลงการใช้ข้อมูล</h2>
+
+      <p class="note note--warn">
+        <strong>ข้อความด้านล่างเป็นร่างเพื่อแสดงขอบเขตเท่านั้น ยังไม่ใช่ข้อตกลงฉบับจริง</strong>
+        ถ้อยคำที่มีผลผูกพันและประกาศตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล
+        อยู่ระหว่างการพิจารณาของสถาบัน และจะประกาศที่หน้านี้เมื่อได้ข้อสรุป
+      </p>
+
+      <ul class="terms">
+        {terms.map((term) => <li>{term}</li>)}
+      </ul>
+
+      <p class="prose">
+        ฉบับภาษาอังกฤษของนโยบายและข้อตกลงอยู่ที่ <a href="/access/">Access policy</a>
+        และแบบฟอร์มขอใช้ข้อมูลของ CheckPD v2.0 อยู่ที่
+        <a href={`${dataset.path}access/`}>หน้าคำขอของชุดข้อมูล</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page-head h1,
+  h2 {
+    line-height: 1.4;
+  }
+
+  .wrap-cell {
+    white-space: normal;
+    min-width: 11rem;
+    line-height: 1.6;
+  }
+
+  .workflow {
+    counter-reset: steps;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+    max-width: var(--measure);
+  }
+
+  .workflow li {
+    counter-increment: steps;
+    display: grid;
+    grid-template-columns: 1.7rem 1fr;
+    gap: 0.7rem;
+    align-items: start;
+    line-height: 1.7;
+  }
+
+  .workflow li::before {
+    content: counter(steps);
+    display: grid;
+    place-items: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 50%;
+    background: var(--brand-tint);
+    color: var(--brand);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .terms {
+    margin: 0;
+    padding-left: 1.2rem;
+    max-width: var(--measure);
+    display: grid;
+    gap: 0.4rem;
+    line-height: 1.7;
+  }
+</style>

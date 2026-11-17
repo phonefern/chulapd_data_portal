@@ -1,0 +1,51 @@
+---
+import { banner } from '../data/deploy';
+import { langOf, type Lang } from '../data/i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const lang: Lang = Astro.props.lang ?? langOf(Astro.url.pathname);
+const t = banner[lang];
+---
+
+<div class="preview" role="note">
+  <p class="wrap preview__inner">
+    <span class="preview__label">{t.label}</span>
+    <span>{t.text}</span>
+  </p>
+</div>
+
+<style>
+  /* Sits above the sticky header and scrolls away with the page: it should be
+     impossible to miss on arrival without permanently eating vertical space. */
+  .preview {
+    background: var(--status-warn-bg);
+    border-bottom: 1px solid var(--status-warn-line);
+    color: var(--ink-primary);
+  }
+
+  .preview__inner {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin: 0;
+    padding-block: 0.55rem;
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .preview__label {
+    flex: none;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--status-warn);
+    border: 1px solid var(--status-warn-line);
+    border-radius: 999px;
+    padding: 0.1rem 0.5rem;
+  }
+</style>

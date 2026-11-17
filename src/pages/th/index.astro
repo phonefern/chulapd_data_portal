@@ -1,0 +1,147 @@
+---
+import Base from '../../layouts/Base.astro';
+import StatTiles from '../../components/StatTiles.astro';
+import summary from '../../data/summary.json';
+import { currentDataset as dataset } from '../../data/dataset';
+
+const [pd, hc] = summary.cohort.groups;
+const n = (value: number) => value.toLocaleString('en-US');
+const gb = (summary.release.total_bytes / 1024 ** 3).toFixed(2);
+
+const modalityCount = summary.modalities.filter((m) => m.flag !== 'voice_available').length;
+
+const tiles = [
+  { value: n(summary.cohort.total), label: 'ผู้เข้าร่วมทั้งหมด' },
+  { value: n(pd.count), label: 'ผู้ป่วยพาร์กินสัน', accent: 'pd' as const },
+  { value: n(hc.count), label: 'กลุ่มควบคุม', accent: 'hc' as const },
+  { value: String(modalityCount), label: 'รูปแบบการประเมิน' },
+  { value: n(summary.release.total_files), label: 'ไฟล์ในชุดข้อมูล', note: `${gb} GB` },
+  { value: String(summary.demographics.province_count), label: 'จังหวัดที่ครอบคลุม' },
+];
+
+const levels = [
+  {
+    level: 'ระดับ 1',
+    name: 'ข้อมูลสาธารณะ',
+    body: 'คำอธิบายชุดข้อมูล สรุปกลุ่มประชากรและความครอบคลุมของแต่ละรูปแบบการประเมิน เอกสารประกอบ พจนานุกรมข้อมูล และวิธีอ้างอิง เปิดให้ทุกคนโดยไม่ต้องลงทะเบียน',
+  },
+  {
+    level: 'ระดับ 2',
+    name: 'ผู้ลงทะเบียน',
+    body: 'ไฟล์ตัวอย่าง ชุดข้อมูลตัวอย่างขนาดเล็ก และตัวอย่างโค้ด เปิดให้หลังลงทะเบียนบัญชีผู้ใช้',
+  },
+  {
+    level: 'ระดับ 3',
+    name: 'ผู้ได้รับอนุมัติ',
+    body: 'ชุดข้อมูลฉบับเต็ม ทั้งไฟล์สัญญาณที่ผ่านการประมวลผลและตารางข้อมูลกำกับทั้งหมด ต้องผ่านการอนุมัติคำขอและลงนามข้อตกลงการใช้ข้อมูล',
+  },
+];
+---
+
+<Base
+  lang="th"
+  title="CheckPD Data Portal — ศูนย์ความเป็นเลิศทางการแพทย์โรคพาร์กินสันฯ"
+  description="คลังชุดข้อมูลตัวบ่งชี้ทางชีวภาพดิจิทัลสำหรับการวิจัยโรคพาร์กินสัน ที่มีการยืนยันการวินิจฉัยโดยแพทย์ผู้เชี่ยวชาญ"
+>
+  <section class="section section--first">
+    <div class="wrap hero">
+      <p class="eyebrow">ศูนย์ความเป็นเลิศทางการแพทย์โรคพาร์กินสันฯ</p>
+      <h1>ชุดข้อมูลตัวบ่งชี้ทางชีวภาพดิจิทัลสำหรับการวิจัยโรคพาร์กินสัน</h1>
+      <p class="lede prose">
+        CheckPD Data Portal เผยแพร่ชุดข้อมูลวิจัยที่จัดทำเอกสารประกอบครบถ้วนและมีการกำกับเวอร์ชัน
+        ข้อมูลเก็บผ่านแอปพลิเคชัน CheckPD บนสมาร์ตโฟน ที่โรงพยาบาลจุฬาลงกรณ์ สภากาชาดไทย
+        ทุกชุดข้อมูลที่เผยแพร่จะถูกตรึงเวอร์ชัน อ้างอิงได้ และเปิดให้นักวิจัยเข้าถึงภายใต้การควบคุม
+      </p>
+      <p class="hero__actions">
+        <a class="btn btn--primary" href={dataset.path}>ดูชุดข้อมูล {dataset.shortTitle}</a>
+        <a class="btn" href="/th/access/">ขั้นตอนการขอใช้ข้อมูล</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div>
+        <p class="eyebrow">ชุดข้อมูลปัจจุบัน</p>
+        <h2>{dataset.shortTitle}</h2>
+      </div>
+
+      <StatTiles tiles={tiles} />
+
+      <p class="prose">
+        ผู้เข้าร่วมทุกรายได้รับการยืนยันการวินิจฉัยโดยแพทย์ผู้เชี่ยวชาญด้านความเคลื่อนไหวผิดปกติ
+        ชุดข้อมูลนี้ครอบคลุมสองกลุ่มเท่านั้น คือผู้ป่วยพาร์กินสันและกลุ่มควบคุมที่มีสุขภาพดี
+      </p>
+      <p class="prose">
+        ความครอบคลุมของแต่ละรูปแบบการประเมินไม่เท่ากันโดยตั้งใจ ชุดข้อมูลเก็บผู้เข้าร่วมทุกรายที่มีผลการประเมินที่ใช้งานได้อย่างน้อยหนึ่งรายการ
+        แทนที่จะคัดเฉพาะผู้ที่ทำครบทุกแบบทดสอบ ซึ่งสะท้อนสภาพการเก็บข้อมูลในโลกจริง
+        ผู้ใช้สามารถกำหนดกลุ่มตัวอย่างของตนเองได้จากคอลัมน์สถานะความพร้อมใช้งานใน
+        <code>metadata.csv</code>
+      </p>
+
+      <p><a href={dataset.path}>รายละเอียดชุดข้อมูล คุณภาพเสียง และความครอบคลุมของการประเมิน (ภาษาอังกฤษ) &rarr;</a></p>
+      <p class="note">v2.1 อยู่ระหว่างเตรียมเผยแพร่ ยังไม่เปิดดาวน์โหลดและยังไม่มี DOI</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <div>
+        <p class="eyebrow">การเข้าถึงข้อมูล</p>
+        <h2>สามระดับของการเข้าถึง</h2>
+      </div>
+
+      <div class="levels">
+        {levels.map((item) => (
+          <article class="card level">
+            <p class="eyebrow">{item.level}</p>
+            <h3>{item.name}</h3>
+            <p class="level__body">{item.body}</p>
+          </article>
+        ))}
+      </div>
+
+      <p class="note note--info">
+        CheckPD ประกอบด้วยแบบสอบถามที่เกี่ยวข้องกับสุขภาพและข้อมูลจากเซ็นเซอร์
+        จึงเผยแพร่แบบควบคุมการเข้าถึง ไม่ใช่การเปิดให้ดาวน์โหลดสาธารณะ
+        ไฟล์ที่เผยแพร่ไม่มีข้อมูลระบุตัวตนโดยตรง ไม่มีรหัสอ้างอิงภายในระบบ และไม่มีเวลาแบบสัมบูรณ์
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    max-width: 52rem;
+    padding-block: var(--space-4) var(--space-3);
+  }
+
+  .hero h1 {
+    margin-block: var(--space-1) var(--space-2);
+    line-height: 1.35;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: var(--space-4);
+  }
+
+  .levels {
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  .level h3 {
+    margin-block: 0.15rem 0.4rem;
+  }
+
+  .level__body {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--ink-secondary);
+    line-height: 1.7;
+  }
+</style>

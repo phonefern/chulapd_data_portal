@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import { currentDataset as dataset, portal } from '../data/dataset';
+
+const recovery = [
+  { href: dataset.path, title: dataset.shortTitle, text: 'Open the current dataset landing page.' },
+  { href: '/datasets/', title: 'All datasets', text: 'Browse the portal catalogue.' },
+  { href: '/documentation/', title: 'Documentation', text: 'Find release guides and schemas.' },
+  { href: '/access/', title: 'Access policy', text: 'Review access levels and request workflow.' },
+];
+---
+
+<Base title={`Page not found - ${portal.name}`} description="The requested CheckPD Data Portal page could not be found.">
+  <header class="wrap page-head missing-head">
+    <p class="eyebrow">Error 404</p>
+    <h1>This page does not exist</h1>
+    <p class="lede prose">The address may be incomplete, or it may refer to a page that has not been published.</p>
+  </header>
+
+  <section class="section section--first"><div class="wrap stack">
+    <div class="note note--warn"><strong>Following a DOI or citation?</strong> Dataset URLs are permanent. Check that the cited version number matches the address, then use the <a href="/datasets/checkpd/versions/">CheckPD version history</a> to recover the correct record.</div>
+    <div class="recovery-grid">{recovery.map((item) => <a class="card recovery" href={item.href}><h2>{item.title}</h2><p>{item.text}</p><span aria-hidden="true">Continue &rarr;</span></a>)}</div>
+  </div></section>
+</Base>
+
+<style>
+  .missing-head { padding-top: var(--space-6); }
+  .recovery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+  .recovery { display: block; color: var(--ink-primary); text-decoration: none; box-shadow: none; }
+  .recovery:hover { color: var(--ink-primary); border-color: var(--brand); }
+  .recovery p { margin-top: var(--space-2); color: var(--ink-secondary); }
+  .recovery span { display: inline-block; margin-top: var(--space-3); color: var(--brand); font-weight: 600; }
+  @media (max-width: 600px) { .recovery-grid { grid-template-columns: 1fr; } }
+</style>
+

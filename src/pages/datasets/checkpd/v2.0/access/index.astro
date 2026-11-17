@@ -1,0 +1,102 @@
+---
+import Base from '../../../../../layouts/Base.astro';
+import DatasetNav from '../../../../../components/DatasetNav.astro';
+import summary from '../../../../../data/summary-v2.0.json';
+import { dataset, portal } from '../../../../../data/dataset';
+
+const n = (value: number) => value.toLocaleString('en-US');
+const gb = (summary.release.total_bytes / 1024 ** 3).toFixed(2);
+const modalityCount = summary.modalities.filter((item) => item.flag !== 'voice_available').length;
+---
+
+<Base title={`Request access - ${dataset.shortTitle} - ${portal.name}`} description={`Request ${dataset.accessLevel.toLowerCase()} access to ${dataset.shortTitle}.`}>
+  <nav class="wrap crumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a><span aria-hidden="true">/</span><a href="/datasets/">Datasets</a><span aria-hidden="true">/</span>
+    <a href={dataset.path}>{dataset.shortTitle}</a><span aria-hidden="true">/</span><span aria-current="page">Access</span>
+  </nav>
+
+  <header class="wrap page-head">
+    <p class="head-badges"><span class="badge badge--brand">{dataset.accessLevel} access</span><span class="badge">Version {dataset.version}</span></p>
+    <h1>Request {dataset.shortTitle}</h1>
+    <p class="lede prose">Tell the curator who you are, where you work and how the release will support your research.</p>
+  </header>
+
+  <DatasetNav />
+
+  <section class="section section--first"><div class="wrap request-layout">
+    <div class="stack">
+      <p class="note note--warn" id="form-status"><strong>Submission Pending.</strong> The institutional request endpoint and final Data Use Agreement are not yet approved. This form is a non-submitting preview of the information that will be required.</p>
+
+      <!-- TODO: form endpoint pending institutional governance decision. -->
+      <form class="request-form" method="post" aria-describedby="form-status">
+        <fieldset>
+          <legend>Researcher details</legend>
+          <div class="field-grid">
+            <div class="field"><label for="researcher-name">Researcher name</label><input id="researcher-name" name="researcher_name" type="text" autocomplete="name" required /></div>
+            <div class="field"><label for="institution">Institution</label><input id="institution" name="institution" type="text" autocomplete="organization" required /></div>
+            <div class="field field--wide"><label for="email">Institutional email</label><input id="email" name="institutional_email" type="email" autocomplete="email" required /><p class="hint">Use an address issued by your research or clinical institution.</p></div>
+            <div class="field field--wide"><label for="purpose">Research purpose</label><textarea id="purpose" name="research_purpose" rows="6" required></textarea><p class="hint">Describe the research question and intended analysis. Do not include health data, national IDs or patient information.</p></div>
+            <div class="field field--wide"><label for="dataset-version">Dataset version requested</label><select id="dataset-version" name="dataset_version" required><option value={dataset.version}>{dataset.shortTitle}</option></select></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Required agreements</legend>
+          <div class="agreements">
+            <label><input name="agree_terms" type="checkbox" required /><span>I will review and agree to the final Data Use Agreement before access is issued.</span></label>
+            <label><input name="no_reidentification" type="checkbox" required /><span>I will not attempt to identify participants or combine the release with external data for re-identification.</span></label>
+            <label><input name="no_redistribution" type="checkbox" required /><span>I will not redistribute the dataset or share issued download credentials.</span></label>
+          </div>
+        </fieldset>
+
+        <div class="form-actions"><button class="btn btn--primary" type="button" disabled>Submission Pending</button><a href="/access/">Read the access policy and draft-status notice</a></div>
+      </form>
+    </div>
+
+    <aside class="summary-card">
+      <p class="eyebrow">Approval unlocks</p>
+      <h2>Full {dataset.shortTitle} release</h2>
+      <dl>
+        <div><dt>Participants</dt><dd>{n(summary.cohort.total)}</dd></div>
+        <div><dt>Modalities</dt><dd>{n(modalityCount)}</dd></div>
+        <div><dt>Files</dt><dd>{n(summary.release.total_files)}</dd></div>
+        <div><dt>Download size</dt><dd>{gb} GB</dd></div>
+        <div><dt>Access</dt><dd>{dataset.accessLevel}</dd></div>
+      </dl>
+      <p>Includes signal files, clinical scores and the complete metadata table. Access is version-specific and logged.</p>
+    </aside>
+  </div></section>
+</Base>
+
+<style>
+  .head-badges { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+  .request-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(17rem, 0.65fr); gap: var(--space-5); align-items: start; }
+  .request-form { display: flex; flex-direction: column; gap: var(--space-5); }
+  .request-form fieldset { min-width: 0; margin: 0; padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .request-form legend { padding-inline: 0.4rem; font-weight: 650; }
+  .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+  .field { display: flex; flex-direction: column; gap: 0.35rem; }
+  .field--wide { grid-column: 1 / -1; }
+  .field label { font-size: 0.9rem; font-weight: 600; }
+  .field input, .field textarea, .field select { width: 100%; min-height: 2.75rem; border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--surface-card); color: var(--ink-primary); font: inherit; padding: 0.65rem 0.75rem; }
+  .field textarea { resize: vertical; }
+  .field input:hover, .field textarea:hover, .field select:hover { border-color: var(--ink-muted); }
+  .hint { font-size: 0.8rem; color: var(--ink-muted); }
+  .agreements { display: flex; flex-direction: column; gap: var(--space-3); }
+  .agreements label { display: grid; grid-template-columns: 1.1rem 1fr; gap: var(--space-2); align-items: start; color: var(--ink-secondary); }
+  .agreements input { width: 1rem; height: 1rem; margin-top: 0.22rem; accent-color: var(--brand); }
+  .form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+  .form-actions .btn:disabled { cursor: not-allowed; opacity: 0.6; }
+  .summary-card { position: sticky; top: 6rem; border: 1px solid var(--line); border-top: 3px solid var(--brand); border-radius: var(--radius-lg); background: var(--surface-card); box-shadow: var(--shadow); overflow: hidden; }
+  .summary-card > :is(p, h2) { margin-inline: var(--space-4); }
+  .summary-card > .eyebrow { margin-top: var(--space-4); }
+  .summary-card h2 { margin-top: var(--space-1); }
+  .summary-card dl { margin-block: var(--space-4); border-block: 1px solid var(--line); }
+  .summary-card dl div { display: flex; justify-content: space-between; gap: var(--space-3); padding: 0.65rem var(--space-4); border-bottom: 1px solid var(--line-faint); }
+  .summary-card dl div:last-child { border-bottom: 0; }
+  .summary-card dt { color: var(--ink-muted); }
+  .summary-card dd { margin: 0; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .summary-card > p:last-child { margin-bottom: var(--space-4); color: var(--ink-secondary); font-size: 0.88rem; }
+  @media (max-width: 850px) { .request-layout { grid-template-columns: 1fr; } .summary-card { position: static; grid-row: 1; } }
+  @media (max-width: 600px) { .field-grid { grid-template-columns: 1fr; } .field--wide { grid-column: auto; } .request-form fieldset { padding: var(--space-3); } }
+</style>

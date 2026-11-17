@@ -1,0 +1,99 @@
+---
+interface Tile {
+  value: string;
+  label: string;
+  note?: string;
+  accent?: 'pd' | 'hc';
+}
+
+interface Props {
+  tiles: Tile[];
+}
+
+const { tiles } = Astro.props;
+---
+
+<dl class="tiles">
+  {tiles.map((tile) => (
+    <div class="tile" data-accent={tile.accent}>
+      <dd class="tile__value">{tile.value}</dd>
+      <dt class="tile__label">{tile.label}</dt>
+      {tile.note && <p class="tile__note">{tile.note}</p>}
+    </div>
+  ))}
+</dl>
+
+<style>
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0;
+    margin: 0;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .tile {
+    background: var(--surface-card);
+    padding: 1.15rem 1.2rem;
+    position: relative;
+    border-right: 1px solid var(--line);
+  }
+
+  .tile:last-child {
+    border-right: 0;
+  }
+
+  /* The accent is a 2px rule, not a coloured number - values keep text ink so
+     they stay legible and the colour only carries group identity. */
+  .tile[data-accent]::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 2px;
+    background: var(--tile-accent);
+  }
+
+  .tile[data-accent='pd'] {
+    --tile-accent: var(--series-pd);
+  }
+
+  .tile[data-accent='hc'] {
+    --tile-accent: var(--series-hc);
+  }
+
+  .tile__value {
+    margin: 0;
+    font-size: clamp(1.45rem, 3vw, 1.8rem);
+    font-weight: 620;
+    letter-spacing: -0.025em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    color: var(--ink-primary);
+  }
+
+  .tile__label {
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+    font-weight: 550;
+    color: var(--ink-secondary);
+  }
+
+  .tile__note {
+    margin: 0.2rem 0 0;
+    font-size: 0.76rem;
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 620px) {
+    .tiles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tile {
+      border-bottom: 1px solid var(--line);
+    }
+  }
+</style>

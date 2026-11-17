@@ -1,0 +1,213 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import StatTiles from '../../../../components/StatTiles.astro';
+import V21Availability from '../../../../components/V21Availability.astro';
+import cohort from '../../../../data/summary-v2.1-verified.json';
+import verified from '../../../../data/summary-v2.0.json';
+import { dataset, portal } from '../../../../data/dataset';
+
+/**
+ * CheckPD v2.1 — cohort in preparation.
+ *
+ * This page has no DOI and carries no `schema.org/Dataset` markup on purpose.
+ * v2.0 is the record that a citation resolves to; publishing structured data for
+ * an unreleased, still-incomplete tree would put it into dataset search results
+ * as though it were available.
+ */
+
+const [pd, hc] = cohort.cohort.groups;
+const n = (value: number) => value.toLocaleString('en-US');
+const age = cohort.age.overall!;
+
+const tiles = [
+  { value: n(cohort.cohort.total), label: 'Participants selected' },
+  { value: n(pd.count), label: "Parkinson's disease", accent: 'pd' as const },
+  { value: n(hc.count), label: 'Healthy controls', accent: 'hc' as const },
+  { value: String(cohort.demographics.province_count), label: 'Provinces' },
+  { value: `${age.median}`, label: 'Median age', note: `${n(cohort.age.reported)} reported` },
+];
+
+const deltaTotal = cohort.cohort.total - verified.cohort.total;
+const generated = cohort.generated_at.replace('T', ' ').replace('Z', ' UTC');
+const gaps = cohort.known_gaps;
+---
+
+<Base
+  title={`CheckPD v2.1 (in preparation) - ${portal.name}`}
+  description="Cohort composition and modality coverage for the CheckPD v2.1 release, in preparation. Figures counted from the built release tree."
+>
+  <nav class="wrap crumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a> <span aria-hidden="true">/</span>
+    <a href="/datasets/">Datasets</a> <span aria-hidden="true">/</span>
+    <span aria-current="page">CheckPD v2.1</span>
+  </nav>
+
+  <header class="wrap page-head">
+    <p class="head__badges">
+      <span class="badge">Version 2.1</span>
+      <span class="badge">In preparation</span>
+      <span class="badge">Files verified</span>
+    </p>
+    <h1>CheckPD v2.1 &mdash; cohort in preparation</h1>
+    <p class="lede prose">
+      The v2.1 release tree has been built and every figure below is counted from the files in
+      it. Voice files that pass preprocessing and quality control are included. Touchscreen
+      tasks remain excluded from the release.
+    </p>
+  </header>
+
+  <div class="wrap">
+    <p class="note note--warn">
+      <strong>Not yet published.</strong> There is no v2.1 download, DOI or citation. Licence,
+      ethics approval and data use terms are still pending.
+    </p>
+  </div>
+
+  <section class="section section--first">
+    <div class="wrap stack">
+      <StatTiles tiles={tiles} />
+
+      <div class="split">
+        <div class="prose">
+          <h2>What is settled</h2>
+          {gaps.condition_conflict_groups_resolved > 0 && (
+            <p>Account selection has been reviewed for
+              {' '}{n(gaps.condition_conflict_groups_resolved)} identity groups with
+              different conditions across their assessment history.</p>
+          )}
+          <p>
+            Unresolved accounts with conflicting labels are held for clinical review.
+            Reviewed selections retain the chosen account's own assessments and source label.
+            Earlier control assessments are not relabelled as PD. Accounts sharing
+            a verified national ID were merged, keeping the record with the most complete
+            assessment, and participants with no usable assessment at all were excluded. Ages
+            outside 18&ndash;110 were treated as data-entry errors and blanked rather than
+            corrected or dropped.
+          </p>
+          <p>
+            Against v2.0 the cohort grows by {n(deltaTotal)} participants, from
+            {' '}{n(verified.cohort.total)} to {n(cohort.cohort.total)}. The Parkinson&rsquo;s
+            group grows from {n(verified.cohort.groups[0].count)} to {n(pd.count)}.
+          </p>
+
+          <h2>What changed from v2.0</h2>
+          <p>
+            The dual-tap and pinch-to-size tasks are <strong>not released</strong>. Circle-size
+            calibration is not comparable across handsets, so the recorded geometry cannot be
+            interpreted between participants.
+          </p>
+          <p>
+            Clinical instrument scores are not published in this release.
+            {n(gaps.incomplete_inertial_participants)} participants have retained
+            accelerometer-only recordings. Their missing gyroscope channels are flagged;
+            {n(gaps.partial_feature_rows)} feature rows contain the supported accelerometer
+            features, with unsupported features left empty.
+          </p>
+          <p>
+            {n(gaps.voice_padded_files)} short YPL recordings include trailing silence to
+            reach five seconds. Their original duration and padding are recorded in
+            the voice QC table so measured audio remains distinguishable from padding.
+          </p>
+        </div>
+
+        <dl class="facts">
+          <div class="facts__row"><dt>Status</dt><dd>Release tree validated, review pending</dd></div>
+          <div class="facts__row"><dt>Figures from</dt><dd>Released files</dd></div>
+          <div class="facts__row"><dt>Release size</dt><dd>{n(cohort.release.total_files)} files</dd></div>
+          <div class="facts__row"><dt>DOI</dt><dd>None &mdash; not a release</dd></div>
+          <div class="facts__row"><dt>Clinical scores</dt><dd>Not included in v2.1</dd></div>
+          <div class="facts__row"><dt>Age missing</dt><dd>{n(cohort.age.missing)} of {n(cohort.cohort.total)}</dd></div>
+          <div class="facts__row"><dt>Generated</dt><dd>{generated}</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <V21Availability />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap stack">
+      <h2>Before v2.1 can be published</h2>
+      <ol class="todo">
+        <li>Review voice QC exclusions and the retained recordings' quality logs.</li>
+        {gaps.condition_conflict_groups_held > 0 && (
+          <li>Resolve {n(gaps.condition_conflict_groups_held)} identity groups with conflicting
+            PD and control labels; these groups are held out of the current release.</li>
+        )}
+        <li>Settle licence, DOI, ethics approval and data use terms &mdash; all still pending.</li>
+        <li>Freeze the release tree and mint the DOI.</li>
+      </ol>
+      <p class="prose">
+        Until then <a href={dataset.path}>CheckPD v2.0</a> remains the citable record, and
+        <a href="/datasets/checkpd/versions/"> version history</a> tracks what changes between
+        releases.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .head__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: var(--space-2);
+  }
+
+  .split {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .split h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .split h2 + p {
+    margin-bottom: 0.9rem;
+  }
+
+  .split .prose h2 + p + p {
+    margin-bottom: 1.4rem;
+  }
+
+  .facts {
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface-card);
+    overflow: hidden;
+  }
+
+  .facts__row {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr;
+    gap: 0.75rem;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--line-faint);
+  }
+
+  .facts__row:last-child { border-bottom: 0; }
+  .facts dt { color: var(--ink-muted); }
+  .facts dd { margin: 0; color: var(--ink-primary); overflow-wrap: anywhere; }
+
+  .todo {
+    max-width: var(--measure);
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.45rem;
+    line-height: 1.65;
+  }
+
+  @media (max-width: 800px) {
+    .split { grid-template-columns: 1fr; }
+  }
+</style>

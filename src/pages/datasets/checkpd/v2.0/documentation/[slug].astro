@@ -1,0 +1,73 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../../../../../layouts/Base.astro';
+import summary from '../../../../../data/summary-v2.0.json';
+import { dataset, portal } from '../../../../../data/dataset';
+import DatasetNav from '../../../../../components/DatasetNav.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('modalities');
+  return entries.map((entry) => ({ params: { slug: entry.data.slug }, props: { entry } }));
+}
+
+interface Props { entry: CollectionEntry<'modalities'>; }
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const modality = summary.modalities.find((item) => item.flag === entry.data.flag);
+const n = (value: number) => value.toLocaleString('en-US');
+const questions = entry.data.slug === 'questionnaire' ? summary.questionnaire_schema : [];
+---
+
+<Base title={`${entry.data.title} documentation - ${dataset.shortTitle}`} description={entry.data.summary}>
+  <nav class="wrap crumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a><span aria-hidden="true">/</span><a href="/datasets/">Datasets</a><span aria-hidden="true">/</span>
+    <a href={dataset.path}>{dataset.shortTitle}</a><span aria-hidden="true">/</span><a href={`${dataset.path}documentation/`}>Documentation</a><span aria-hidden="true">/</span><span aria-current="page">{entry.data.title}</span>
+  </nav>
+
+  <header class="wrap page-head">
+    <p class="head-badges"><span class="badge">{entry.data.status}</span>{modality && <span class="badge badge--brand">{n(modality.total)} participants with data</span>}</p>
+    <h1>{entry.data.title}</h1>
+    <p class="lede prose">{entry.data.summary}</p>
+  </header>
+
+  <DatasetNav />
+
+  <section class="section section--first"><div class="wrap doc-layout">
+    <aside class="doc-nav" aria-label="Documentation section navigation">
+      <p class="eyebrow">On this page</p>
+      <a href="#task-protocol">Task protocol</a><a href="#sensor-and-format">Sensor and format</a><a href="#preprocessing">Preprocessing</a><a href="#quality-control">Quality control</a><a href="#example-structure">Example structure</a>
+      {questions.length > 0 && <a href="#questionnaire-items">Questionnaire items</a>}
+    </aside>
+    <article class="doc-body"><Content />
+      {questions.length > 0 && <section id="questionnaire-items">
+        <h2>Questionnaire items</h2>
+        <p class="note note--warn"><strong>Domain grouping Pending.</strong> The released schema does not yet include the clinically reviewed <code>domain</code> field, so items are shown in release order without grouping.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th scope="col">ID</th><th scope="col">English</th><th scope="col">Thai</th><th scope="col">Type</th><th scope="col">Encoding</th></tr></thead>
+          <tbody>{questions.map((question) => <tr><th scope="row"><code>{question.question_id}</code></th><td>{question.question_text_en}</td><td lang="th">{question.question_text_th}</td><td>{question.response_type}</td><td><code>{question.encoding}</code></td></tr>)}</tbody>
+        </table></div>
+      </section>}
+    </article>
+  </div></section>
+</Base>
+
+<style>
+  .head-badges { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; }
+  .doc-layout { display: grid; grid-template-columns: minmax(10rem, 13rem) minmax(0, 46rem); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  .doc-nav { position: sticky; top: 5rem; display: flex; flex-direction: column; gap: 0.45rem; padding: 1rem; border-left: 2px solid var(--brand); background: var(--surface-sunken); }
+  .doc-nav a { color: var(--ink-secondary); font-size: 0.88rem; text-decoration: none; }
+  .doc-nav a:hover { color: var(--brand); text-decoration: underline; }
+  .doc-body { min-width: 0; }
+  .doc-body > :global(* + *) { margin-top: var(--space-3); }
+  .doc-body :global(h2) { margin-top: 2.25rem; scroll-margin-top: 5rem; }
+  .doc-body :global(h2:first-child) { margin-top: 0; }
+  .doc-body :global(h3) { margin-top: 1.5rem; }
+  .doc-body :global(p), .doc-body :global(li) { color: var(--ink-secondary); }
+  .doc-body :global(pre) { overflow-x: auto; padding: 1rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface-sunken); font-size: 0.82rem; line-height: 1.55; }
+  .doc-body :global(.todo) { margin-block: 1rem; padding: 0.9rem 1rem; border: 1px solid var(--status-warn-line); border-left: 3px solid var(--status-warn); border-radius: var(--radius); background: var(--status-warn-bg); color: var(--ink-primary); font-weight: 600; }
+  #questionnaire-items { margin-top: 2.25rem; }
+  #questionnaire-items > * + * { margin-top: var(--space-3); }
+  #questionnaire-items th, #questionnaire-items td { white-space: normal; vertical-align: top; min-width: 7rem; }
+  #questionnaire-items td:nth-child(2), #questionnaire-items td:nth-child(3) { min-width: 20rem; }
+  @media (max-width: 760px) { .doc-layout { grid-template-columns: 1fr; } .doc-nav { position: static; } }
+</style>

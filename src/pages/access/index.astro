@@ -1,0 +1,116 @@
+---
+import Base from '../../layouts/Base.astro';
+import { portal } from '../../data/dataset';
+
+const levels = [
+  {
+    level: 'Level 1',
+    name: 'Public metadata',
+    access: 'No registration',
+    items: ['Dataset description', 'Cohort and modality summaries', 'Documentation', 'Data dictionary', 'Citation information'],
+  },
+  {
+    level: 'Level 2',
+    name: 'Registered access',
+    access: 'Basic registration',
+    items: ['Non-sensitive documentation', 'Example files', 'Sample dataset', 'Code examples'],
+  },
+  {
+    level: 'Level 3',
+    name: 'Credentialed access',
+    access: 'Approved request and signed DUA',
+    items: ['Full release download', 'Signal files', 'Clinical scores', 'Complete metadata table'],
+  },
+];
+
+const workflow = [
+  'Submit a dataset-specific request',
+  'Curator reviews the researcher, institution and purpose',
+  'Approved applicant signs the final Data Use Agreement',
+  'A time-limited download link is issued',
+  'Access to the release is logged',
+];
+
+const proposedDuaTopics = [
+  'Use the data only for approved research purposes',
+  'Do not attempt to identify participants',
+  'Do not redistribute the dataset',
+  'Do not combine the release with external data for re-identification',
+  'Report security incidents to the appointed institutional contact',
+  'Cite the dataset and related paper with the correct version',
+  `Acknowledge ${portal.operator} and the Thai Red Cross Society`,
+  'Follow applicable ethical and legal requirements',
+];
+---
+
+<Base title={`Access policy - ${portal.name}`} description="Access levels, review workflow and governance status for datasets in the CheckPD Data Portal.">
+  <header class="wrap page-head">
+    <p class="eyebrow">Access policy</p>
+    <h1>Access to CheckPD data</h1>
+    <p class="lede prose">Public documentation stays open. Participant-level research files require controls proportionate to their sensitivity.</p>
+  </header>
+
+  <section class="section section--first"><div class="wrap stack">
+    <div class="section-heading"><div><p class="eyebrow">Access tiers</p><h2>Three levels of access</h2></div><p>Each level adds material that requires greater accountability from the researcher.</p></div>
+    <div class="level-grid">{levels.map((level) => <article class="card level-card">
+      <div class="level-card__head"><div><p class="eyebrow">{level.level}</p><h3>{level.name}</h3></div><span class="badge">{level.access}</span></div>
+      <ul>{level.items.map((item) => <li>{item}</li>)}</ul>
+    </article>)}</div>
+  </div></section>
+
+  <section class="section"><div class="wrap split">
+    <div class="stack">
+      <div><p class="eyebrow">Approval</p><h2>What applicants can expect</h2></div>
+      <ol class="workflow">{workflow.map((step) => <li>{step}</li>)}</ol>
+      <p class="note">No review turnaround time is currently promised. The curator role and service expectations remain pending institutional confirmation.</p>
+    </div>
+    <aside class="card rationale">
+      <p class="eyebrow">Why credentialed?</p>
+      <h3>Health research data needs a controlled path</h3>
+      <p>The full release contains health-related questionnaire responses, clinical scores and sensor recordings.</p>
+      <p>Released files contain no direct identifiers, backend identifiers, absolute timestamps or private linkage table. De-identification does not remove the need for responsible access controls.</p>
+    </aside>
+  </div></section>
+
+  <section class="section" id="dua"><div class="wrap stack">
+    <div><p class="eyebrow">Data Use Agreement</p><h2>Institutional terms are Pending</h2></div>
+    <p class="note note--warn"><strong>Not a binding agreement.</strong> The final Data Use Agreement has not been approved by the institution. The topics below are a transparent preview of the expected scope only; they are not final terms and cannot be accepted or signed yet.</p>
+    <div class="dua-panel">
+      <div><h3>Proposed policy topics</h3><ul>{proposedDuaTopics.map((topic) => <li>{topic}</li>)}</ul></div>
+      <aside><span class="badge">Pending institutional approval</span><p>The approved DUA will replace this preview without changing previously frozen dataset versions.</p></aside>
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap stack">
+    <div><p class="eyebrow">Privacy and governance</p><h2>PDPA statement Pending</h2></div>
+    <p class="prose">The formal PDPA and data-governance statement is awaiting institutional review. No provisional legal language is presented as policy.</p>
+    <p><a class="btn btn--primary" href="/datasets/checkpd/v2.0/access/">Request CheckPD v2.0 access</a></p>
+  </div></section>
+</Base>
+
+<style>
+  .section-heading { display: flex; align-items: end; justify-content: space-between; gap: var(--space-4); }
+  .section-heading > p { max-width: 38rem; color: var(--ink-secondary); }
+  .level-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
+  .level-card { display: flex; flex-direction: column; box-shadow: none; }
+  .level-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2); }
+  .level-card h3 { margin-top: 0.2rem; }
+  .level-card ul { margin: var(--space-3) 0 0; padding-left: 1.2rem; color: var(--ink-secondary); }
+  .level-card li + li { margin-top: 0.3rem; }
+  .split { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 0.75fr); gap: var(--space-5); align-items: start; }
+  .workflow { margin: 0; padding: 0; list-style: none; counter-reset: steps; border-block: 1px solid var(--line); }
+  .workflow li { counter-increment: steps; display: grid; grid-template-columns: 2rem 1fr; gap: var(--space-2); align-items: start; padding-block: 0.8rem; border-bottom: 1px solid var(--line-faint); }
+  .workflow li:last-child { border-bottom: 0; }
+  .workflow li::before { content: counter(steps); display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--brand-tint); color: var(--brand); font-size: 0.8rem; font-weight: 700; }
+  .rationale { border-top: 3px solid var(--brand); }
+  .rationale h3 { margin-top: var(--space-1); }
+  .rationale p:not(.eyebrow) { margin-top: var(--space-3); color: var(--ink-secondary); }
+  .dua-panel { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(15rem, 0.7fr); gap: var(--space-5); padding: var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .dua-panel ul { margin-bottom: 0; padding-left: 1.25rem; color: var(--ink-secondary); }
+  .dua-panel li + li { margin-top: 0.35rem; }
+  .dua-panel aside { padding-left: var(--space-4); border-left: 1px solid var(--line); }
+  .dua-panel aside p { margin-top: var(--space-3); color: var(--ink-secondary); }
+  #dua { scroll-margin-top: 5rem; }
+  @media (max-width: 820px) { .level-grid, .split, .dua-panel { grid-template-columns: 1fr; } .section-heading { align-items: flex-start; flex-direction: column; } .dua-panel aside { padding: var(--space-3) 0 0; border: 0; border-top: 1px solid var(--line); } }
+  @media (max-width: 520px) { .level-card__head { flex-direction: column; } }
+</style>
